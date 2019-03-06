@@ -12,16 +12,14 @@ namespace MyScrapBook
         public Size notesize = new Size() {Width = 1920, Height=1080};
         public List<BoxInfo> boxinfos;
     }
-
-
+    
     // ボックスの情報
     public class RichBoxsInfo
     {
         public BoxInfo boxinfo;
         public Control controlbox;
     }
-
-
+    
     public class BoxInfo
     {
         //　Boxの区別はファイルの拡張子で行う

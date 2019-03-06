@@ -36,20 +36,21 @@
             this.toolStripCreate = new System.Windows.Forms.ToolStripButton();
             this.toolStripLoad = new System.Windows.Forms.ToolStripButton();
             this.toolStripSave = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSize = new System.Windows.Forms.ToolStripDropDownButton();
+            this.toolStripPageSize = new System.Windows.Forms.ToolStripTextBox();
             this.toolStripText = new System.Windows.Forms.ToolStripButton();
             this.toolStripDisplay = new System.Windows.Forms.ToolStripButton();
             this.toolStripScreen = new System.Windows.Forms.ToolStripButton();
             this.toolStripFolder = new System.Windows.Forms.ToolStripButton();
             this.toolStripPagesBox = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripPage = new System.Windows.Forms.ToolStripButton();
+            this.toolStripWordPad = new System.Windows.Forms.ToolStripButton();
             this.toolStripBackground = new System.Windows.Forms.ToolStripButton();
             this.toolStripPrint = new System.Windows.Forms.ToolStripButton();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.toolStripPageMove = new System.Windows.Forms.ToolStripButton();
             this.toolStripEnd = new System.Windows.Forms.ToolStripButton();
             this.toolStripHelp = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSize = new System.Windows.Forms.ToolStripDropDownButton();
-            this.toolStripPageSize = new System.Windows.Forms.ToolStripTextBox();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer1.SuspendLayout();
@@ -108,6 +109,7 @@
             this.toolStripFolder,
             this.toolStripPagesBox,
             this.toolStripPage,
+            this.toolStripWordPad,
             this.toolStripBackground,
             this.toolStripPrint,
             this.toolStripLabel1,
@@ -116,7 +118,7 @@
             this.toolStripHelp});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1195, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(1251, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // toolStripCreate
@@ -145,6 +147,22 @@
             this.toolStripSave.Size = new System.Drawing.Size(51, 22);
             this.toolStripSave.Text = "保存";
             this.toolStripSave.Click += new System.EventHandler(this.toolStripSave_Click);
+            // 
+            // toolStripSize
+            // 
+            this.toolStripSize.Image = ((System.Drawing.Image)(resources.GetObject("toolStripSize.Image")));
+            this.toolStripSize.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripSize.Name = "toolStripSize";
+            this.toolStripSize.Size = new System.Drawing.Size(92, 22);
+            this.toolStripSize.Text = "ページサイズ";
+            this.toolStripSize.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStripSize_DropDownItemClicked);
+            // 
+            // toolStripPageSize
+            // 
+            this.toolStripPageSize.Name = "toolStripPageSize";
+            this.toolStripPageSize.ReadOnly = true;
+            this.toolStripPageSize.Size = new System.Drawing.Size(80, 25);
+            this.toolStripPageSize.Text = "1920 x 1080";
             // 
             // toolStripText
             // 
@@ -199,6 +217,15 @@
             this.toolStripPage.Text = "ページ追加";
             this.toolStripPage.Click += new System.EventHandler(this.toolStripPage_Click);
             // 
+            // toolStripWordPad
+            // 
+            this.toolStripWordPad.Image = ((System.Drawing.Image)(resources.GetObject("toolStripWordPad.Image")));
+            this.toolStripWordPad.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripWordPad.Name = "toolStripWordPad";
+            this.toolStripWordPad.Size = new System.Drawing.Size(76, 22);
+            this.toolStripWordPad.Text = "WordPad";
+            this.toolStripWordPad.Click += new System.EventHandler(this.toolStripButton1_Click);
+            // 
             // toolStripBackground
             // 
             this.toolStripBackground.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBackground.Image")));
@@ -250,22 +277,6 @@
             this.toolStripHelp.Text = "ヘルプ";
             this.toolStripHelp.Click += new System.EventHandler(this.toolStripHelp_Click);
             // 
-            // toolStripSize
-            // 
-            this.toolStripSize.Image = ((System.Drawing.Image)(resources.GetObject("toolStripSize.Image")));
-            this.toolStripSize.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripSize.Name = "toolStripSize";
-            this.toolStripSize.Size = new System.Drawing.Size(92, 22);
-            this.toolStripSize.Text = "ページサイズ";
-            this.toolStripSize.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStripSize_DropDownItemClicked);
-            // 
-            // toolStripPageSize
-            // 
-            this.toolStripPageSize.Name = "toolStripPageSize";
-            this.toolStripPageSize.ReadOnly = true;
-            this.toolStripPageSize.Size = new System.Drawing.Size(100, 25);
-            this.toolStripPageSize.Text = "1920 x 1080";
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -314,6 +325,7 @@
         private System.Windows.Forms.ToolStripButton toolStripCreate;
         private System.Windows.Forms.ToolStripDropDownButton toolStripSize;
         private System.Windows.Forms.ToolStripTextBox toolStripPageSize;
+        private System.Windows.Forms.ToolStripButton toolStripWordPad;
     }
 }
 

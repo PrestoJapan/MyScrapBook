@@ -8,25 +8,7 @@ namespace MyScrapBook
 {
     public partial class MainForm : Form
     {
-        private DialogResult yesno(string caption, string message)
-        {
-            MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-            return MessageBox.Show(this, message, caption, buttons, MessageBoxIcon.Question);
-        }
-
-        private DialogResult yes(string caption, string message)
-        {
-            MessageBoxButtons buttons = MessageBoxButtons.OK;
-            return MessageBox.Show(this, message, caption, buttons, MessageBoxIcon.Question);
-        }
-
-        private string savefilename(string suffix)
-        {
-            string datepath = DateTime.Now.ToShortDateString().Replace("/", "-") + "T" +
-                DateTime.Now.ToLongTimeString().Replace(":", "-") + "." + suffix;
-            return datepath;
-        }
-
+        #region ReadNote
         public bool readNote()
         {
             OpenFileDialog ofd = new OpenFileDialog();
@@ -119,6 +101,20 @@ namespace MyScrapBook
 
                         richBoxInfos.Add(info.filename, rinfo);
                     }
+                    else if (info.filename.Contains("html"))
+                    {
+                        // Html Panelの追加
+                        RichBoxsInfo rinfo = new RichBoxsInfo() { boxinfo = info }; 
+                        Panel web = createWebBrowser(File.ReadAllText(cfile), rinfo.boxinfo);
+                        rinfo.controlbox = web;
+                        if (info.page == 0) zeropage = true; // ?
+                        //web.Location = info.location;
+                        //web.Size = rinfo.boxinfo.size;
+                        //web.Tag = info.filename;
+                        //web.Controls[0].Tag = info.filename;
+
+                        richBoxInfos.Add(info.filename, rinfo);
+                    }
                     if (count < info.page) { count = info.page; }
                 }
                 catch (Exception ex)
@@ -132,6 +128,28 @@ namespace MyScrapBook
             return;
         }
 
+        public bool readNote0()
+        {
+            bool flag = readNote();
+            if (!flag) return false;
+            // toolstripのページ修正
+            int max = 1;
+            foreach (RichBoxsInfo info in richBoxInfos.Values)
+            {
+                if (info.boxinfo.page > max) max = info.boxinfo.page;
+            }
+            toolStripPagesBox.DropDownItems.Clear();
+            for (int i = 1; i <= max; i++) { toolStripPagesBox.DropDownItems.Add(string.Format("ページ{0}", i)); }
+            // 描画
+            pagedraw(1);
+            set_zOrderToControl(1);
+            return true;
+        }
+
+
+        #endregion ReadNote
+
+        #region SaveNote
         private void saveNote()
         {
             saveboxinfos = new List<BoxInfo>();
@@ -144,6 +162,17 @@ namespace MyScrapBook
             MessageBox.Show(Properties.Settings.Default.workingFile + "を上書き保存しました。");
         }
 
+        public void savedata()
+        {
+            if (editstart)
+            {
+                set_zOrderToInfo(getCurrentPage()); // 枠の前後
+                saveNote();
+            }
+        }
+        #endregion SaveNote
+
+        #region NewNote
         private bool newBook()
         {
             //　Bookの作成
@@ -184,27 +213,7 @@ namespace MyScrapBook
             }
             return true;
         }
-
-        private string getWorkDir()
-        {
-            return Properties.Settings.Default.workingDirectory;
-        }
-
-        private string getWorkfilefullpath()
-        {
-            return Path.Combine(Properties.Settings.Default.workingDirectory, Properties.Settings.Default.workingFile);
-        }
-
-        private string getWorkfile()
-        {
-            return Properties.Settings.Default.workingFile;
-        }
-
-        private string getWorkSubDir()
-        {
-            string namewithout = Properties.Settings.Default.workingFile.Replace("mlinf","").Replace(".","");
-            return Path.Combine(Properties.Settings.Default.workingDirectory, namewithout);
-        }
+        #endregion NewNote
 
     }
 }

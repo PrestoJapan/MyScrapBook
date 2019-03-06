@@ -35,8 +35,5 @@ namespace MyScrapBook
             memg.Dispose();
             return img;
         }
-
-
-
     }
 }

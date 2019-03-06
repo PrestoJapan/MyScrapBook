@@ -4,11 +4,76 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace MyScrapBook
 {
     public partial class MainForm : Form
     {
+        // Workingpanelにコントロールを追加
+        #region 独自コントロールの追加
+        // Workingpanelのダブルクリックで呼ばれる
+        private void addControlToWorkingpanel()
+        {
+            // shiftキーをチェック
+            if ((Control.ModifierKeys & Keys.Shift) != Keys.Shift)
+            {
+                // クリップボードの内容をチェック
+                IDataObject data = Clipboard.GetDataObject();
+                if (data != null)
+                {
+                    //関連付けられているすべての形式を列挙する
+                    foreach (string fmt in data.GetFormats())
+                    {
+                        if (fmt.Contains("HTML"))
+                        {
+                            //invokeApp("wordpad.exe");
+                            var meta = data.GetData("HTML Format", true);
+                            string html = Clipboard.GetData("HTML Format") as string;
+                            addHTML(workingpanel.PointToClient(Cursor.Position), html);
+                            return;
+                        }
+
+                        if (fmt.Contains("Rich") || fmt.Contains("HTML") || fmt.Contains("Text") || fmt.Contains("String"))
+                        {
+                            // RichTextBoxの作成　tagはBoxInfoと同じ内容
+                            RichTextBox rbox = createRichBox();
+                            BoxInfo info = new BoxInfo()
+                            {
+                                filename = savefilename("rtf"),
+                                size = new Size(200, 200),
+                                visible = true,
+                                location = workingpanel.PointToClient(Cursor.Position),
+                                page = getCurrentPage()
+                            };
+                            rbox.Size = info.size;
+                            rbox.Location = info.location;
+                            rbox.Tag = info.filename;
+                            rbox.Paste();
+                            info.text = rbox.Text;
+                            rbox.ReadOnly = true; // 必ずPaste後に行うこと
+
+                            // １秒以内にダブルクリックされていないことを確認し、ファイル名が重複しないようにする
+                            if (!richBoxInfos.ContainsKey(info.filename))
+                            {
+                                richBoxInfos.Add(info.filename, new RichBoxsInfo { boxinfo = info, controlbox = rbox });
+                                workingpanel.Controls.Add(rbox);
+                                rbox.SaveFile(Path.Combine(getWorkSubDir(), info.filename));
+                            }
+                            break;
+                        }
+                        else if (fmt.Contains("Bitmap"))
+                        {
+                            // Imageの追加
+                            addImage(workingpanel.PointToClient(Cursor.Position));
+                            break;
+                        }
+                        Console.WriteLine(fmt);
+                    }
+                }
+            }
+        }
+
         public RichTextBox createRichBox()
         {
             RichTextBox rbox = new RichTextBox();
@@ -19,10 +84,91 @@ namespace MyScrapBook
             rbox.MouseUp += Box_MouseUp;
             rbox.MouseDoubleClick += Box_MouseDoubleClick;
             rbox.ScrollBars = RichTextBoxScrollBars.None;
-            rbox.ContextMenuStrip = this.contextMenuStrip1; // 右ボタンクリックで表示されるポップアップメニュー
+            rbox.ContextMenuStrip = this.contextRichMenuStrip; // 右ボタンクリックで表示されるポップアップメニュー
             rbox.BackColor = Color.White;
             rbox.LostFocus += Rbox_LostFocus;
             return rbox;
+        }
+
+        private void addImage(Point place)
+        {
+            PictureBox pic = createPictureBox();
+            pic.Location = place;
+            pic.Image = Clipboard.GetImage();
+            pic.Size = pic.Image.Size;
+            BoxInfo info = new BoxInfo()
+            {
+                filename = savefilename("png"),
+                size = pic.Size,
+                visible = true,
+                location = pic.Location,
+                page = getCurrentPage()
+            };
+            pic.Tag = info.filename;
+            richBoxInfos.Add(info.filename, new RichBoxsInfo { boxinfo = info, controlbox = pic });
+            workingpanel.Controls.Add(pic);
+            pic.Image.Save(Path.Combine(getWorkSubDir(), info.filename));
+            // クリップボードをクリア
+            Clipboard.Clear();
+            return;
+        }
+
+        private void addHTML(Point place, string html)
+        {
+            BoxInfo info = new BoxInfo()
+            {
+                filename = savefilename("html"),
+                size = new Size(400, 400),
+                visible = true,
+                location = place,
+                page = getCurrentPage()
+            };
+            Panel web = createWebBrowser(html, info);
+            richBoxInfos.Add(info.filename, new RichBoxsInfo { boxinfo = info, controlbox = web });
+            workingpanel.Controls.Add(web);
+            File.WriteAllText(Path.Combine(getWorkSubDir(), info.filename), html);
+            // クリップボードをクリア
+            Clipboard.Clear();
+            return;
+        }
+
+        private PictureBox createPictureBox()
+        {
+            PictureBox pic = new PictureBox();
+            pic.SizeMode = PictureBoxSizeMode.Zoom;
+            pic.MouseDown += Box_MouseDown;
+            pic.MouseMove += Box_MouseMove;
+            pic.MouseUp += Box_MouseUp;
+            pic.MouseDoubleClick += Box_MouseDoubleClick;
+            pic.ContextMenuStrip = this.contextPictureMenuStrip; // 右ボタンクリックで表示されるポップアップメニュー
+            return pic;
+        }
+
+        private Panel createWebBrowser(string html, BoxInfo boxinfo)
+        {
+            Panel pan = new Panel() { BackColor = Color.White, Width = boxinfo.size.Width, Height = boxinfo.size.Height };
+            WebBrowser web = new WebBrowser();
+
+            pan.MouseDown += Box_MouseDown;
+            pan.MouseMove += Box_MouseMove;
+            pan.MouseUp += Box_MouseUp;
+            pan.MouseDoubleClick += Box_MouseDoubleClick;
+            pan.ContextMenuStrip = this.contextHTMLMenuStrip; // 右ボタンクリックで表示されるポップアップメニュー
+            pan.Location = boxinfo.location;
+            pan.Tag = boxinfo.filename;
+            pan.Size = boxinfo.size;
+
+            web.Location = new Point(30, 30);
+            web.Size = new Size(pan.Width - 60, pan.Height - 60);
+            web.AllowNavigation = false;
+            web.ScrollBarsEnabled = false;
+            web.IsWebBrowserContextMenuEnabled = false;
+            web.ContextMenuStrip = this.contextHTMLMenuStrip;
+            web.DocumentText = html.Substring(html.IndexOf("<html>"));
+            web.Tag = boxinfo.filename;
+
+            pan.Controls.Add(web);
+            return pan;
         }
 
         private void Rbox_LostFocus(object sender, EventArgs e)
@@ -30,9 +176,9 @@ namespace MyScrapBook
             (sender as RichTextBox).ReadOnly = true;
         }
 
-        //
-        // RichBoxの削除
-        //
+        #endregion 独自コントロールの追加
+
+        #region 独自コントロールのドラッグ操作
         private void Box_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             Control rbox = sender as Control;
@@ -63,6 +209,18 @@ namespace MyScrapBook
                 else if (status == astatus.サイズ)
                 {
                     richBoxInfos[rbox.Tag as string].boxinfo.size = rbox.Size;
+                    if (rbox.GetType() == typeof(Panel))
+                    {
+                        // Panel内のwebbrawserのサイズも変える
+                        Control web = rbox.Controls[0];
+                        web.Size = new Size(rbox.Size.Width - 60, rbox.Size.Height - 60);
+                    } if (rbox.GetType() == typeof(PictureBox))
+                    {
+                        //　PictureBoxのサイズを絵のサイズに合わせる
+                        rbox = match_aspect(rbox as PictureBox);
+                        richBoxInfos[rbox.Tag as string].boxinfo.location = rbox.Location;
+                        richBoxInfos[rbox.Tag as string].boxinfo.size = rbox.Size;
+                    }
                 }
             }
             statusclear();
@@ -71,7 +229,6 @@ namespace MyScrapBook
         private void Box_MouseMove(object sender, MouseEventArgs e)
         {
             Control rbox = sender as Control;
-            //rbox.SelectionLength = 0;
 
             Point cp = this.PointToClient(Cursor.Position);
             if (status == astatus.移動)
@@ -102,24 +259,27 @@ namespace MyScrapBook
                 Cursor.Current = Cursors.PanNW;
             }
         }
+        #endregion 独自コントロールのドラッグ操作
 
-        //
-        //
-        // Picture
-        //
-        //
-        //
-        private PictureBox createPictureBox()
+        #region 独自コントロールの削除・前面・拡大
+        private void removeControl(Control rbox)
         {
-            PictureBox pic = new PictureBox();
-            pic.SizeMode = PictureBoxSizeMode.Zoom;
-            pic.MouseDown += Box_MouseDown;
-            pic.MouseMove += Box_MouseMove;
-            pic.MouseUp += Box_MouseUp;
-            pic.MouseDoubleClick += Box_MouseDoubleClick;
-            pic.ContextMenuStrip = this.contextMenuStrip1; // 右ボタンクリックで表示されるポップアップメニュー
-            return pic;
+            string infokey = rbox.Tag as string;
+            workingpanel.Controls.Remove(rbox);
+            richBoxInfos.Remove(infokey);
         }
+
+        private static void tofrontControl(Control rbox)
+        {
+            rbox.BringToFront();
+            int zIndex = rbox.Parent.Controls.GetChildIndex(rbox);
+        }
+
+        private static void expandControl(Control rbox)
+        {
+            rbox.Size = rbox.Size + new Size(100, 100);
+        }
+        #endregion 独自コントロールの削除・前面・拡大
 
     }
 }

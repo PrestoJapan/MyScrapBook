@@ -55,6 +55,15 @@
     <Compile Include="Forms\CamaraForm.Designer.cs">
       <DependentUpon>CamaraForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\ContextMenu.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ExecOtherApp.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\HintTool.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\IOClass.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -82,10 +91,13 @@
     <Compile Include="Forms\ScreenCopyForm.Designer.cs">
       <DependentUpon>ScreenCopyForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\WebCameraForm.cs">
+    <Compile Include="Forms\variable.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\WebCameraForm.Designer.cs">
+    <Compile Include="WebCamera\WebCameraForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WebCamera\WebCameraForm.Designer.cs">
       <DependentUpon>WebCameraForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\WebForm.cs">
@@ -94,6 +106,9 @@
     <Compile Include="Forms\WebForm.Designer.cs">
       <DependentUpon>WebForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Workingpanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Tools\DataClass.cs" />
     <Compile Include="Forms\MainForm.cs">
       <SubType>Form</SubType>
@@ -101,7 +116,7 @@
     <Compile Include="Forms\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Tools\PrintClass.cs">
+    <Compile Include="Forms\PrintClass.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Program.cs" />
@@ -127,7 +142,7 @@
     <EmbeddedResource Include="Forms\ScreenCopyForm.resx">
       <DependentUpon>ScreenCopyForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\WebCameraForm.resx">
+    <EmbeddedResource Include="WebCamera\WebCameraForm.resx">
       <DependentUpon>WebCameraForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\WebForm.resx">
