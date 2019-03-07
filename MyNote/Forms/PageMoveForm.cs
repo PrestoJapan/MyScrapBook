@@ -10,7 +10,7 @@ namespace MyScrapBook
     public partial class PageMoveForm : Form
     {
         Button targetpage;
-        Dictionary<string, RichBoxsInfo> richBoxInfos;
+        //Dictionary<string, MediaBoxsInfo> mediaBoxInfos;
         Dictionary<int, int> order = new Dictionary<int,int>();
 
 
@@ -19,9 +19,9 @@ namespace MyScrapBook
             InitializeComponent();
         }
 
-        public void setrichBoxInfo(Dictionary<string, RichBoxsInfo> info, int pagenumber)
+        public void setrichBoxInfo(Dictionary<string, MediaBoxsInfo> info, int pagenumber)
         {
-            richBoxInfos = info;
+            //mediaBoxInfos = info;
             for (int i = 1; i <= pagenumber; i++)
             {
                 Button page = new Button();
@@ -60,9 +60,9 @@ namespace MyScrapBook
                 order.Add(i++, (int)btn.Tag);
             }
 
-            foreach ( RichBoxsInfo val in richBoxInfos.Values) {
-                val.boxinfo.page = order[val.boxinfo.page];
-            }
+            //foreach ( MediaBoxsInfo val in mediaBoxInfos.Values) {
+            //    val.boxinfo.page = order[val.boxinfo.page];
+            //}
             this.Close();
 
         }

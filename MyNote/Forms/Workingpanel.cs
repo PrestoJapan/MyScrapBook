@@ -46,7 +46,7 @@ namespace MyScrapBook
                     case ".jpg":
                     case ".png":
                         Clipboard.SetImage(Image.FromFile(fileName));
-                        addImage(workingpanel.PointToClient(Cursor.Position));
+                        addImage(CursorPosition());
                         break;
                 }
                 Debug.WriteLine(fileName);
@@ -69,11 +69,11 @@ namespace MyScrapBook
         private void set_zOrderToInfo(int page)
         {
             // ページ内のオブジェのZorderをセットする
-            foreach (string fkey in richBoxInfos.Keys)
+            foreach (string fkey in mediaBoxInfos.Keys)
             {
-                if (richBoxInfos[fkey].boxinfo.page == getCurrentPage())
+                if (mediaBoxInfos[fkey].boxinfo.page == getCurrentPage())
                 {
-                    richBoxInfos[fkey].boxinfo.zorder = workingpanel.Controls.GetChildIndex(richBoxInfos[fkey].controlbox);
+                    mediaBoxInfos[fkey].boxinfo.zorder = workingpanel.Controls.GetChildIndex(mediaBoxInfos[fkey].controlbox);
                 }
             }
         }
@@ -81,11 +81,11 @@ namespace MyScrapBook
         private void set_zOrderToControl(int page)
         {
             // ページ内のオブジェのZorderをセットする
-            foreach (string fkey in richBoxInfos.Keys)
+            foreach (string fkey in mediaBoxInfos.Keys)
             {
-                if (richBoxInfos[fkey].boxinfo.page == getCurrentPage())
+                if (mediaBoxInfos[fkey].boxinfo.page == getCurrentPage())
                 {
-                    workingpanel.Controls.SetChildIndex(richBoxInfos[fkey].controlbox, richBoxInfos[fkey].boxinfo.zorder);
+                    workingpanel.Controls.SetChildIndex(mediaBoxInfos[fkey].controlbox, mediaBoxInfos[fkey].boxinfo.zorder);
                 }
             }
         }

@@ -15,6 +15,7 @@ namespace MyScrapBook
         // Workingpanelのダブルクリックで呼ばれる
         private void addControlToWorkingpanel()
         {
+            if (!editstart) return;
             // shiftキーをチェック
             if ((Control.ModifierKeys & Keys.Shift) != Keys.Shift)
             {
@@ -30,11 +31,11 @@ namespace MyScrapBook
                             //invokeApp("wordpad.exe");
                             var meta = data.GetData("HTML Format", true);
                             string html = Clipboard.GetData("HTML Format") as string;
-                            addHTML(workingpanel.PointToClient(Cursor.Position), html);
+                            addHTML(CursorPosition(), html);
                             return;
                         }
 
-                        if (fmt.Contains("Rich") || fmt.Contains("HTML") || fmt.Contains("Text") || fmt.Contains("String"))
+                        if (fmt.Contains("Rich") || fmt.Contains("Text") || fmt.Contains("String"))
                         {
                             // RichTextBoxの作成　tagはBoxInfoと同じ内容
                             RichTextBox rbox = createRichBox();
@@ -43,7 +44,7 @@ namespace MyScrapBook
                                 filename = savefilename("rtf"),
                                 size = new Size(200, 200),
                                 visible = true,
-                                location = workingpanel.PointToClient(Cursor.Position),
+                                location = CursorPosition(),
                                 page = getCurrentPage()
                             };
                             rbox.Size = info.size;
@@ -54,9 +55,9 @@ namespace MyScrapBook
                             rbox.ReadOnly = true; // 必ずPaste後に行うこと
 
                             // １秒以内にダブルクリックされていないことを確認し、ファイル名が重複しないようにする
-                            if (!richBoxInfos.ContainsKey(info.filename))
+                            if (!mediaBoxInfos.ContainsKey(info.filename))
                             {
-                                richBoxInfos.Add(info.filename, new RichBoxsInfo { boxinfo = info, controlbox = rbox });
+                                mediaBoxInfos.Add(info.filename, new MediaBoxsInfo { boxinfo = info, controlbox = rbox });
                                 workingpanel.Controls.Add(rbox);
                                 rbox.SaveFile(Path.Combine(getWorkSubDir(), info.filename));
                             }
@@ -65,7 +66,7 @@ namespace MyScrapBook
                         else if (fmt.Contains("Bitmap"))
                         {
                             // Imageの追加
-                            addImage(workingpanel.PointToClient(Cursor.Position));
+                            addImage(CursorPosition());
                             break;
                         }
                         Console.WriteLine(fmt);
@@ -105,7 +106,7 @@ namespace MyScrapBook
                 page = getCurrentPage()
             };
             pic.Tag = info.filename;
-            richBoxInfos.Add(info.filename, new RichBoxsInfo { boxinfo = info, controlbox = pic });
+            mediaBoxInfos.Add(info.filename, new MediaBoxsInfo { boxinfo = info, controlbox = pic });
             workingpanel.Controls.Add(pic);
             pic.Image.Save(Path.Combine(getWorkSubDir(), info.filename));
             // クリップボードをクリア
@@ -124,7 +125,7 @@ namespace MyScrapBook
                 page = getCurrentPage()
             };
             Panel web = createWebBrowser(html, info);
-            richBoxInfos.Add(info.filename, new RichBoxsInfo { boxinfo = info, controlbox = web });
+            mediaBoxInfos.Add(info.filename, new MediaBoxsInfo { boxinfo = info, controlbox = web });
             workingpanel.Controls.Add(web);
             File.WriteAllText(Path.Combine(getWorkSubDir(), info.filename), html);
             // クリップボードをクリア
@@ -199,16 +200,18 @@ namespace MyScrapBook
         private void Box_MouseUp(object sender, MouseEventArgs e)
         {
             Control rbox = sender as Control;
+            Debug.WriteLine(rbox.Tag as String);
             //　shift DCで消されたコントロールで呼び出される場合があるためコントロールの存在を確認する
             if (workingpanel.Controls.Contains(rbox))
             {
                 if (status == astatus.移動)
                 {
-                    richBoxInfos[rbox.Tag as string].boxinfo.location = rbox.Location;
+                    mediaBoxInfos[rbox.Tag as string].boxinfo.location = rbox.Location;
                 }
-                else if (status == astatus.サイズ)
+                else if (status == astatus.サイズ右下 || status == astatus.サイズ右上 || 
+                    status == astatus.サイズ左下 || status == astatus.サイズ左上)
                 {
-                    richBoxInfos[rbox.Tag as string].boxinfo.size = rbox.Size;
+                    mediaBoxInfos[rbox.Tag as string].boxinfo.size = rbox.Size;
                     if (rbox.GetType() == typeof(Panel))
                     {
                         // Panel内のwebbrawserのサイズも変える
@@ -218,39 +221,101 @@ namespace MyScrapBook
                     {
                         //　PictureBoxのサイズを絵のサイズに合わせる
                         rbox = match_aspect(rbox as PictureBox);
-                        richBoxInfos[rbox.Tag as string].boxinfo.location = rbox.Location;
-                        richBoxInfos[rbox.Tag as string].boxinfo.size = rbox.Size;
+                        mediaBoxInfos[rbox.Tag as string].boxinfo.location = rbox.Location;
+                        mediaBoxInfos[rbox.Tag as string].boxinfo.size = rbox.Size;
+                    }
+                } else if (status == astatus.ライン)
+                {
+                    //　ライン情報をBox間のラインに変更する
+                    string startbox = onBox(tmpline.start, getCurrentPage());
+                    string endbox = onBox(tmpline.end, getCurrentPage());
+                    //// ラインを引き直す
+                    if (startbox.Length > 0 && endbox.Length > 0)
+                    {
+                        mediaBoxInfos[startbox].boxinfo.linkboxes.Add(endbox);
+                        mediaBoxInfos[endbox].boxinfo.linkboxes.Add(startbox);
+                        status = astatus.NOP;
+                        workingpanel.Refresh();
                     }
                 }
             }
             statusclear();
+            workingpanel.Refresh();
         }
 
         private void Box_MouseMove(object sender, MouseEventArgs e)
         {
             Control rbox = sender as Control;
-
-            Point cp = this.PointToClient(Cursor.Position);
+            Point cp = CursorPosition();
+            Point lefttop = rbox.Location;
+            Point leftbottom = new Point(lefttop.X, lefttop.Y + rbox.Height);
+            Point righttop = new Point(lefttop.X + rbox.Width, lefttop.Y);
+            Point rightbottom = new Point(lefttop.X + rbox.Width, lefttop.Y + rbox.Height);
             if (status == astatus.移動)
             {
                 if (delta.X < 1) delta = new Point(cp.X - rbox.Location.X, cp.Y - rbox.Location.Y);
                 rbox.Location = new Point(cp.X - delta.X, cp.Y - delta.Y);
             }
-            else if (status == astatus.サイズ)
+            else if (status == astatus.サイズ左上)
             {
-                rbox.Size = new Size(cp.X - rbox.Location.X, cp.Y - rbox.Location.Y);
+                rbox.Location = cp;
+                rbox.Size = new Size(Math.Abs(rightbottom.X - cp.X), Math.Abs(rightbottom.Y - cp.Y));
             }
+            else if (status == astatus.サイズ左下)
+            {
+                rbox.Location = new Point(cp.X, righttop.Y);
+                rbox.Size = new Size(Math.Abs(righttop.X - cp.X), Math.Abs(cp.Y - righttop.Y));
+            }
+            else if (status == astatus.サイズ右上)
+            {
+                rbox.Location = new Point(leftbottom.X, cp.Y);
+                rbox.Size = new Size(Math.Abs(cp.X - leftbottom.X), Math.Abs(leftbottom.Y - cp.Y));
+            }
+            else if (status == astatus.サイズ右下)
+            {
+                rbox.Size = new Size(Math.Abs(cp.X - lefttop.X), Math.Abs(cp.Y - lefttop.Y));
+            }
+            else if (status == astatus.ライン)
+            {
+                // 線を引く
+                tmpline.end = CursorPosition();
+                workingpanel.Refresh();
+            }
+            if (rbox.Size.Width < 30) rbox.Size = new Size(30, rbox.Size.Height);
+            if (rbox.Size.Height < 30) rbox.Size = new Size(rbox.Size.Width, 30);
         }
 
         private void Box_MouseDown(object sender, MouseEventArgs e)
         {
+            Point cp = CursorPosition();
+            if (((Control.ModifierKeys & Keys.Shift) == Keys.Shift) && ((Control.ModifierKeys & Keys.Control) == Keys.Control))
+            {
+                // ラインの開始
+                status = astatus.ライン;
+                tmpline = new LinePoint() { start = cp, end = cp };
+                return;
+            }
             //　マウスダウンの位置がboxの右下近辺ならばサイズ変更　それ以外は移動
             Control rbox = sender as Control;
             Point rightbottom = rbox.Location + rbox.Size;
-            Point cp = this.PointToClient(Cursor.Position);
-            if ((Math.Abs(rightbottom.X - cp.X) < 50) && (Math.Abs(rightbottom.Y - cp.Y) < 50))
+            if ((Math.Abs(rbox.Location.X - cp.X) < 50) && (Math.Abs(rbox.Location.Y - cp.Y) < 50))
             {
-                status = astatus.サイズ;
+                status = astatus.サイズ左上;
+                Cursor.Current = Cursors.Cross;
+            }
+            else if ((Math.Abs(rbox.Location.X - cp.X) < 50) && (Math.Abs(rightbottom.Y - cp.Y) < 50))
+            {
+                status = astatus.サイズ左下;
+                Cursor.Current = Cursors.Cross;
+            }
+            else if ((Math.Abs(rightbottom.X - cp.X) < 50) && (Math.Abs(rbox.Location.Y - cp.Y) < 50))
+            {
+                status = astatus.サイズ右上;
+                Cursor.Current = Cursors.Cross;
+            }
+            else if ((Math.Abs(rightbottom.X - cp.X) < 50) && (Math.Abs(rightbottom.Y - cp.Y) < 50))
+            {
+                status = astatus.サイズ右下;
                 Cursor.Current = Cursors.Cross;
             }
             else
@@ -266,7 +331,7 @@ namespace MyScrapBook
         {
             string infokey = rbox.Tag as string;
             workingpanel.Controls.Remove(rbox);
-            richBoxInfos.Remove(infokey);
+            mediaBoxInfos.Remove(infokey);
         }
 
         private static void tofrontControl(Control rbox)
@@ -281,5 +346,35 @@ namespace MyScrapBook
         }
         #endregion 独自コントロールの削除・前面・拡大
 
+        LinePoint tmpline = new LinePoint();
+
+
+        // Boxをつなぐラインの描画
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+            Pen pen = new Pen(Color.Red, 3);
+            Graphics g = e.Graphics;
+            int cpage = getCurrentPage();
+
+            foreach (string skey in mediaBoxInfos.Keys)
+            {
+                foreach (string ekey in mediaBoxInfos[skey].boxinfo.linkboxes)
+                {
+                    if (mediaBoxInfos[skey].boxinfo.page == cpage)
+                    {
+                        List<Point> lines = DrawBoxToBoxLine(mediaBoxInfos[skey].boxinfo, mediaBoxInfos[ekey].boxinfo);
+                        g.DrawLine(pen, lines[0].X, lines[0].Y, lines[1].X, lines[1].Y);
+                    }
+                }
+            }
+            if (status == astatus.ライン) g.DrawLine(pen, tmpline.start.X, tmpline.start.Y, tmpline.end.X, tmpline.end.Y);
+            g.Dispose();
+        }
+    }
+
+    class LinePoint
+    {
+        public Point start;
+        public Point end;
     }
 }

@@ -14,7 +14,7 @@ namespace MyScrapBook
         #region アプリの実行と終了後の処理
         public void explorer()
         {
-            Process proc = Process.Start(getWorkDir());
+            Process proc = Process.Start(getWorkSubDir());
         }
 
         private void invokeApp(string exename)
@@ -42,13 +42,14 @@ namespace MyScrapBook
         {
             Process p = sender as Process;
             string fullpath = p.StartInfo.Arguments;
+            if (fullpath.Length < 1) return;
             string tagname = Path.GetFileName(fullpath);
             if (tagname.Contains(".png")) return;
 
-            if (typeof(RichTextBox) == richBoxInfos[tagname].controlbox.GetType())
+            if (typeof(RichTextBox) == mediaBoxInfos[tagname].controlbox.GetType())
             {
-                MessageBox.Show("編集が終了しました。");
-                (richBoxInfos[tagname].controlbox as RichTextBox).LoadFile(fullpath);
+                // MessageBox.Show("編集が終了しました。");
+                (mediaBoxInfos[tagname].controlbox as RichTextBox).LoadFile(fullpath);
                 pagedraw(getCurrentPage());
             }
             else

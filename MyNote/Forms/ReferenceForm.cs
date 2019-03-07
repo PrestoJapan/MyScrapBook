@@ -24,6 +24,8 @@ namespace MyScrapBook
         public ReferenceForm()
         {
             InitializeComponent();
+
+            //　拡大・縮小のポップアップメニュー
             pictureBox1.MouseDown += PictureBox1_MouseDown;
             pictureBox1.MouseUp += PictureBox1_MouseUp;
             pictureBox1.MouseMove += PictureBox1_MouseMove;
@@ -65,11 +67,12 @@ namespace MyScrapBook
                 status = opemode.拡大;
         }
 
-        public void displayPage(Bitmap img, int page)
+        public void displayPage(Bitmap img, int page, string title)
         {
             originalimg = img;
             currentscale = 1;
             pictureBox1.Image = ResizeImage(img, currentscale);
+            this.Text = title;
         }
 
         public static Bitmap ResizeImage(Bitmap image, double scale)
@@ -80,6 +83,18 @@ namespace MyScrapBook
             g.DrawImage(image, 0, 0, result.Width, result.Height);
 
             return result;
+        }
+
+        private void 拡大ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (currentscale < 5) currentscale += 0.25;
+            pictureBox1.Image = ResizeImage(originalimg, currentscale);
+        }
+
+        private void 縮小ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (currentscale > 0.5) currentscale -= 0.25;
+            pictureBox1.Image = ResizeImage(originalimg, currentscale);
         }
     }
 }

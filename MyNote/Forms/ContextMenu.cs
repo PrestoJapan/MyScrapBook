@@ -18,19 +18,22 @@ namespace MyScrapBook
             contextRichMenuStrip = createContext("contextMenuStrip1", ContextMenuStrip_Click, new ToolStripItem[] {
                 CreateMenuItem(this.DeleteToolStripMenuItem_Click, "DeleteToolStripMenuItem", "削除"),
                 CreateMenuItem(this.FrontToolStripMenuItem_Click, "FrontToolStripMenuItem", "前面"),
+                CreateMenuItem(this.LineToolStripMenuItem_Click, "LineToolStripMenuItem", "ラインの削除"),
                 CreateMenuItem(this.WordToolStripMenuItem_Click, "WordToolStripMenuItem", "ワード編集"),
                 CreateMenuItem(this.WordPadToolStripMenuItem_Click, "WordPadToolStripMenuItem", "ワードパッド編集") });
             //　workingpanel
-            contextWorkPanelMenuStrip = createContext("contextMenuStrip2", ContextMenuStrip_Click, new ToolStripItem[] {
-                CreateMenuItem(this.MovePageToolStripMenuItem_Click, "MovePageToolStripMenuItem", "移動")});
+            //contextWorkPanelMenuStrip = createContext("contextMenuStrip2", ContextMenuStrip_Click, new ToolStripItem[] {
+            //    CreateMenuItem(this.MovePageToolStripMenuItem_Click, "MovePageToolStripMenuItem", "移動")});
             //　PictureBoxのメニュー
             contextPictureMenuStrip = createContext("contextMenuStrip3", ContextMenuStrip_Click, new ToolStripItem[] {
                 CreateMenuItem(this.DeleteToolStripMenuItem_Click, "DeleteToolStripMenuItem", "削除"),
-                CreateMenuItem(this.FrontToolStripMenuItem_Click, "FrontToolStripMenuItem", "前面")});
+                CreateMenuItem(this.FrontToolStripMenuItem_Click, "FrontToolStripMenuItem", "前面"),
+                CreateMenuItem(this.LineToolStripMenuItem_Click, "LineToolStripMenuItem", "ラインの削除")});
             //　HTMLBoxのメニュー
             contextHTMLMenuStrip = createContext("contextMenuStrip4", ContextMenuStrip_Click, new ToolStripItem[] {
                 CreateMenuItem(this.DeleteToolStripMenuItem_Click, "DeleteToolStripMenuItem", "削除"),
                 CreateMenuItem(this.FrontToolStripMenuItem_Click, "FrontToolStripMenuItem", "前面"),
+                CreateMenuItem(this.LineToolStripMenuItem_Click, "LineToolStripMenuItem", "ラインの削除"),
                 CreateMenuItem(this.WebToolStripMenuItem_Click, "WebToolStripMenuItem", "Webの表示") });
 
             // workingpanelにメニューを割り当てる
@@ -67,47 +70,75 @@ namespace MyScrapBook
         #endregion ContextMenu
 
         #region toolStripクリック
-        private void EditToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ToolStripSize_Click(object sender, EventArgs e)
         {
-            if (typeof(RichTextBox) == richBoxInfos[currentControlTag].controlbox.GetType())
-            {
-                (richBoxInfos[currentControlTag].controlbox as RichTextBox).ReadOnly = false;
-            }
-            //else if (typeof(PictureBox) == richBoxInfos[currentControlTag].controlbox.GetType())
-            //{
+            ToolStripMenuItem menu = sender as ToolStripMenuItem;
+            setPage(menu.Text);
+        }
 
-            //}
+        private void ToolStripBoxClear_Click(object sender, EventArgs e)
+        {
+            string subdir = getWorkSubDir();
+            string[] files = Directory.GetFiles(subdir);
+            List<string> boxes = new List<string>();
+            foreach (string key in mediaBoxInfos.Keys)
+            {
+                boxes.Add(mediaBoxInfos[key].boxinfo.filename);
+            }
+            foreach (string path in files)
+            {
+                string filename = Path.GetFileName(path);
+                if (!boxes.Contains(filename))
+                {
+                    File.Delete(path);
+                }
+            }
         }
 
         private void DeleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            removeControl(richBoxInfos[currentControlTag].controlbox);
+            removeControl(mediaBoxInfos[currentControlTag].controlbox);
         }
 
         private void FrontToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            tofrontControl(richBoxInfos[currentControlTag].controlbox);
+            tofrontControl(mediaBoxInfos[currentControlTag].controlbox);
         }
 
-        private void ExpandToolStripMenuItem_Click(object sender, EventArgs e)
+        private void LineToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            expandControl(richBoxInfos[currentControlTag].controlbox);
+            tofrontControl(mediaBoxInfos[currentControlTag].controlbox);
+            deleteLine(currentControlTag);
+        }
+
+        private void deleteLine(string controltag)
+        {
+            List<string> linktags = mediaBoxInfos[currentControlTag].boxinfo.linkboxes;
+            // パートナーのリンク情報からこのBoxの情報を消す
+            foreach (string tag in linktags)
+            {
+                mediaBoxInfos[tag].boxinfo.linkboxes.Remove(currentControlTag);
+            }
+            //　自身のリンク情報を消す
+            mediaBoxInfos[currentControlTag].boxinfo.linkboxes.Clear();
+            // 再描画
+            workingpanel.Refresh();
         }
 
         private void WebToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //            WebForm web = new WebForm();
-            WebCameraForm web = new WebCameraForm();
-            if (sender.GetType() == typeof(Panel))
+            // HTMLファイルを読み現行のURLを調べる
+            string path = Path.Combine(getWorkSubDir(), mediaBoxInfos[currentControlTag].boxinfo.filename);
+            string[] htmls = File.ReadAllLines(path);
+            
+            for (int i=0;i<10;i++)
             {
-
-            } else
-            {
-
+                if (htmls[i].StartsWith("SourceURL:"))
+                {
+                    Process.Start(htmls[i].Replace("SourceURL:", ""));
+                    return;
+                }
             }
-            web.gotoweb(richBoxInfos[currentControlTag].controlbox.Text, this);
-            web.TopMost = true;
-            web.Show();
         }
 
         private void MovePageToolStripMenuItem_Click(object sender, EventArgs e)
@@ -117,12 +148,19 @@ namespace MyScrapBook
 
         private void WordToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            invokeApp("WINWORD.EXE", Path.Combine(getWorkSubDir(), richBoxInfos[currentControlTag].boxinfo.filename));
+            if (currentControlTag.Length < 1) invokeApp("WINWORD.EXE");
+            else invokeApp("WINWORD.EXE", Path.Combine(getWorkSubDir(), mediaBoxInfos[currentControlTag].boxinfo.filename));
         }
 
         private void WordPadToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            invokeApp("WORDPAD.EXE", Path.Combine(getWorkSubDir(), richBoxInfos[currentControlTag].boxinfo.filename));
+            if (currentControlTag.Length < 1) invokeApp("WORDPAD.EXE");
+            else invokeApp("WORDPAD.EXE", Path.Combine(getWorkSubDir(), mediaBoxInfos[currentControlTag].boxinfo.filename));
+        }
+
+        private void NotePadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            invokeApp("NOTEPAD.EXE");
         }
 
         private void toolStripSave_Click(object sender, EventArgs e)
@@ -170,7 +208,7 @@ namespace MyScrapBook
         {
             PageMoveForm movef = new PageMoveForm();
             movef.TopMost = true;
-            movef.setrichBoxInfo(richBoxInfos, toolStripPagesBox.DropDownItems.Count);
+            movef.setrichBoxInfo(mediaBoxInfos, toolStripPagesBox.DropDownItems.Count);
             movef.ShowDialog();
             pagedraw(getCurrentPage());
         }
@@ -191,7 +229,7 @@ namespace MyScrapBook
 
         private void toolStripHelp_Click(object sender, EventArgs e)
         {
-            PopupForm help = new PopupForm();
+            PopupHelpForm help = new PopupHelpForm();
             help.TopMost = true;
             help.Show();
         }
@@ -220,32 +258,24 @@ namespace MyScrapBook
             toolStripPagesBox.Text = "ページ1";
             editstart = flag;
 
+            toolStripHelpButton1.Visible = true; // ヘルプは常に表示
             toolStripCreate.Visible = !flag;
             toolStripLoad.Visible = !flag;
 
-            toolStripSave.Visible = flag;
             toolStripText.Visible = flag;
-            toolStripDisplay.Visible = flag;
             toolStripScreen.Visible = flag;
-            toolStripFolder.Visible = flag;
             toolStripPagesBox.Visible = flag;
             toolStripPage.Visible = flag;
             toolStripBackground.Visible = flag;
-            toolStripPrint.Visible = flag;
-            toolStripPageMove.Visible = flag;
-            toolStripEnd.Visible = flag;
-            toolStripHelp.Visible = flag;
-            toolStripSize.Visible = flag;
             toolStripPageSize.Visible = flag;
-            toolStripWordPad.Visible = flag;
+            toolStripOthers.Visible = flag;
         }
 
-        private void toolStripSize_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        private void setPage(string size)
         {
-            toolStripScreen.Text = e.ClickedItem.Text;
             // Pageサイズの変更
-            workingpanel.Size = setPageSize(toolStripScreen.Text);
-            toolStripPageSize.Text = toolStripScreen.Text;
+            workingpanel.Size = setPageSize(size);
+            toolStripPageSize.Text = size;
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
@@ -280,14 +310,15 @@ namespace MyScrapBook
             // ページをクリアする
             workingpanel.Controls.Clear();
             // ページの描画
-            foreach (string fkey in richBoxInfos.Keys)
+            foreach (string fkey in mediaBoxInfos.Keys)
             {
-                if (richBoxInfos[fkey].boxinfo.page == page && richBoxInfos[fkey].boxinfo.visible)
+                if (mediaBoxInfos[fkey].boxinfo.page == page && mediaBoxInfos[fkey].boxinfo.visible)
                 {
-                    workingpanel.Controls.Add(richBoxInfos[fkey].controlbox);
+                    workingpanel.Controls.Add(mediaBoxInfos[fkey].controlbox);
                 }
             }
             this.Text = String.Format("{0}  {1} ページ", getWorkfile(), page);
+            workingpanel.Refresh();
         }
 
         //Button1のClickイベントハンドラ
@@ -314,7 +345,7 @@ namespace MyScrapBook
         public void anotherform()
         {
             ReferenceForm f1 = new ReferenceForm();
-            f1.displayPage(CaptureControl(workingpanel), getCurrentPage());
+            f1.displayPage(CaptureControl(workingpanel), getCurrentPage(), this.Text);
             f1.Show();
         }
 
@@ -328,22 +359,22 @@ namespace MyScrapBook
 
         public void search(string searchstring, ToolStripLabel result)
         {
-            foreach (string key in richBoxInfos.Keys)
+            foreach (string key in mediaBoxInfos.Keys)
             {
-                if (richBoxInfos[key].boxinfo.text.Contains(searchstring))
+                if (mediaBoxInfos[key].boxinfo.text.Contains(searchstring))
                 {
-                    radios[richBoxInfos[key].boxinfo.page].Checked = true;
-                    pagedraw(richBoxInfos[key].boxinfo.page);
+                    radios[mediaBoxInfos[key].boxinfo.page].Checked = true;
+                    pagedraw(mediaBoxInfos[key].boxinfo.page);
                     break;
                 }
             }
 
             StringBuilder sb = new StringBuilder();
-            foreach (string key in richBoxInfos.Keys)
+            foreach (string key in mediaBoxInfos.Keys)
             {
-                if (richBoxInfos[key].boxinfo.text.Contains(searchstring))
+                if (mediaBoxInfos[key].boxinfo.text.Contains(searchstring))
                 {
-                    sb.Append((richBoxInfos[key].boxinfo.page + 1).ToString() + ", ");
+                    sb.Append((mediaBoxInfos[key].boxinfo.page + 1).ToString() + ", ");
                 }
             }
             result.Text = sb.ToString();

@@ -46,7 +46,7 @@ namespace MyScrapBook
             if (!inaction)
             {
                 inaction = !inaction;
-                startpoint = new Point(Cursor.Position.X, Cursor.Position.Y);
+                startpoint = Cursor.Position;
             }
         }
 

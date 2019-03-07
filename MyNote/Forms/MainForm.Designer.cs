@@ -35,22 +35,32 @@
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripCreate = new System.Windows.Forms.ToolStripButton();
             this.toolStripLoad = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSave = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSize = new System.Windows.Forms.ToolStripDropDownButton();
-            this.toolStripPageSize = new System.Windows.Forms.ToolStripTextBox();
             this.toolStripText = new System.Windows.Forms.ToolStripButton();
-            this.toolStripDisplay = new System.Windows.Forms.ToolStripButton();
             this.toolStripScreen = new System.Windows.Forms.ToolStripButton();
-            this.toolStripFolder = new System.Windows.Forms.ToolStripButton();
-            this.toolStripPagesBox = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripPage = new System.Windows.Forms.ToolStripButton();
-            this.toolStripWordPad = new System.Windows.Forms.ToolStripButton();
+            this.toolStripPagesBox = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripBackground = new System.Windows.Forms.ToolStripButton();
-            this.toolStripPrint = new System.Windows.Forms.ToolStripButton();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripPageMove = new System.Windows.Forms.ToolStripButton();
-            this.toolStripEnd = new System.Windows.Forms.ToolStripButton();
-            this.toolStripHelp = new System.Windows.Forms.ToolStripButton();
+            this.toolStripOthers = new System.Windows.Forms.ToolStripDropDownButton();
+            this.上書き保存ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.終了ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.印刷ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.ページサイズ変更ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.x1080ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.x2160ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.x4320ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ページの並べ替えToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.ワードパッドToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ワードの起動ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.メモ帳の起動ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.データフォルダToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.未使用のBoxデータを削除ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.このページの参照ウインドウToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripPageSize = new System.Windows.Forms.ToolStripTextBox();
+            this.toolStripHelpButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer1.SuspendLayout();
@@ -64,11 +74,11 @@
             // toolStripContainer1.ContentPanel
             // 
             this.toolStripContainer1.ContentPanel.Controls.Add(this.scrollpanel);
-            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(1305, 383);
+            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(1417, 383);
             this.toolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.toolStripContainer1.Location = new System.Drawing.Point(0, 0);
             this.toolStripContainer1.Name = "toolStripContainer1";
-            this.toolStripContainer1.Size = new System.Drawing.Size(1305, 408);
+            this.toolStripContainer1.Size = new System.Drawing.Size(1417, 408);
             this.toolStripContainer1.TabIndex = 0;
             this.toolStripContainer1.Text = "toolStripContainer1";
             // 
@@ -83,16 +93,17 @@
             this.scrollpanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.scrollpanel.Location = new System.Drawing.Point(0, 0);
             this.scrollpanel.Name = "scrollpanel";
-            this.scrollpanel.Size = new System.Drawing.Size(1305, 383);
+            this.scrollpanel.Size = new System.Drawing.Size(1417, 383);
             this.scrollpanel.TabIndex = 1;
             // 
             // workingpanel
             // 
             this.workingpanel.AutoScroll = true;
-            this.workingpanel.Location = new System.Drawing.Point(12, 14);
+            this.workingpanel.Location = new System.Drawing.Point(12, 11);
             this.workingpanel.Name = "workingpanel";
             this.workingpanel.Size = new System.Drawing.Size(4000, 4000);
             this.workingpanel.TabIndex = 0;
+            this.workingpanel.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             // 
             // toolStrip1
             // 
@@ -100,25 +111,18 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripCreate,
             this.toolStripLoad,
-            this.toolStripSave,
-            this.toolStripSize,
-            this.toolStripPageSize,
             this.toolStripText,
-            this.toolStripDisplay,
             this.toolStripScreen,
-            this.toolStripFolder,
-            this.toolStripPagesBox,
             this.toolStripPage,
-            this.toolStripWordPad,
+            this.toolStripPagesBox,
             this.toolStripBackground,
-            this.toolStripPrint,
             this.toolStripLabel1,
-            this.toolStripPageMove,
-            this.toolStripEnd,
-            this.toolStripHelp});
+            this.toolStripOthers,
+            this.toolStripPageSize,
+            this.toolStripHelpButton1});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1251, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(759, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // toolStripCreate
@@ -139,48 +143,14 @@
             this.toolStripLoad.Text = "Bookを開く";
             this.toolStripLoad.Click += new System.EventHandler(this.toolStripLoad_Click);
             // 
-            // toolStripSave
-            // 
-            this.toolStripSave.Image = ((System.Drawing.Image)(resources.GetObject("toolStripSave.Image")));
-            this.toolStripSave.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripSave.Name = "toolStripSave";
-            this.toolStripSave.Size = new System.Drawing.Size(51, 22);
-            this.toolStripSave.Text = "保存";
-            this.toolStripSave.Click += new System.EventHandler(this.toolStripSave_Click);
-            // 
-            // toolStripSize
-            // 
-            this.toolStripSize.Image = ((System.Drawing.Image)(resources.GetObject("toolStripSize.Image")));
-            this.toolStripSize.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripSize.Name = "toolStripSize";
-            this.toolStripSize.Size = new System.Drawing.Size(92, 22);
-            this.toolStripSize.Text = "ページサイズ";
-            this.toolStripSize.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStripSize_DropDownItemClicked);
-            // 
-            // toolStripPageSize
-            // 
-            this.toolStripPageSize.Name = "toolStripPageSize";
-            this.toolStripPageSize.ReadOnly = true;
-            this.toolStripPageSize.Size = new System.Drawing.Size(80, 25);
-            this.toolStripPageSize.Text = "1920 x 1080";
-            // 
             // toolStripText
             // 
             this.toolStripText.Image = ((System.Drawing.Image)(resources.GetObject("toolStripText.Image")));
             this.toolStripText.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripText.Name = "toolStripText";
-            this.toolStripText.Size = new System.Drawing.Size(74, 22);
-            this.toolStripText.Text = "テキスト枠";
+            this.toolStripText.Size = new System.Drawing.Size(98, 22);
+            this.toolStripText.Text = "テキスト枠追加";
             this.toolStripText.Click += new System.EventHandler(this.toolStripText_Click);
-            // 
-            // toolStripDisplay
-            // 
-            this.toolStripDisplay.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDisplay.Image")));
-            this.toolStripDisplay.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripDisplay.Name = "toolStripDisplay";
-            this.toolStripDisplay.Size = new System.Drawing.Size(83, 22);
-            this.toolStripDisplay.Text = "別ウインドウ";
-            this.toolStripDisplay.Click += new System.EventHandler(this.toolStripDisplay_Click);
             // 
             // toolStripScreen
             // 
@@ -191,23 +161,6 @@
             this.toolStripScreen.Text = "スクリーンショット";
             this.toolStripScreen.Click += new System.EventHandler(this.toolStripScreen_Click);
             // 
-            // toolStripFolder
-            // 
-            this.toolStripFolder.Image = ((System.Drawing.Image)(resources.GetObject("toolStripFolder.Image")));
-            this.toolStripFolder.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripFolder.Name = "toolStripFolder";
-            this.toolStripFolder.Size = new System.Drawing.Size(88, 22);
-            this.toolStripFolder.Text = "データフォルダ";
-            this.toolStripFolder.Click += new System.EventHandler(this.toolStripFolder_Click);
-            // 
-            // toolStripPagesBox
-            // 
-            this.toolStripPagesBox.Image = ((System.Drawing.Image)(resources.GetObject("toolStripPagesBox.Image")));
-            this.toolStripPagesBox.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripPagesBox.Name = "toolStripPagesBox";
-            this.toolStripPagesBox.Size = new System.Drawing.Size(29, 22);
-            this.toolStripPagesBox.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStripPagesBox_DropDownItemClicked);
-            // 
             // toolStripPage
             // 
             this.toolStripPage.Image = ((System.Drawing.Image)(resources.GetObject("toolStripPage.Image")));
@@ -217,14 +170,13 @@
             this.toolStripPage.Text = "ページ追加";
             this.toolStripPage.Click += new System.EventHandler(this.toolStripPage_Click);
             // 
-            // toolStripWordPad
+            // toolStripPagesBox
             // 
-            this.toolStripWordPad.Image = ((System.Drawing.Image)(resources.GetObject("toolStripWordPad.Image")));
-            this.toolStripWordPad.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripWordPad.Name = "toolStripWordPad";
-            this.toolStripWordPad.Size = new System.Drawing.Size(76, 22);
-            this.toolStripWordPad.Text = "WordPad";
-            this.toolStripWordPad.Click += new System.EventHandler(this.toolStripButton1_Click);
+            this.toolStripPagesBox.Image = ((System.Drawing.Image)(resources.GetObject("toolStripPagesBox.Image")));
+            this.toolStripPagesBox.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripPagesBox.Name = "toolStripPagesBox";
+            this.toolStripPagesBox.Size = new System.Drawing.Size(29, 22);
+            this.toolStripPagesBox.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStripPagesBox_DropDownItemClicked);
             // 
             // toolStripBackground
             // 
@@ -235,59 +187,177 @@
             this.toolStripBackground.Text = "背景色";
             this.toolStripBackground.Click += new System.EventHandler(this.toolStripBackground_Click);
             // 
-            // toolStripPrint
-            // 
-            this.toolStripPrint.Image = ((System.Drawing.Image)(resources.GetObject("toolStripPrint.Image")));
-            this.toolStripPrint.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripPrint.Name = "toolStripPrint";
-            this.toolStripPrint.Size = new System.Drawing.Size(51, 22);
-            this.toolStripPrint.Text = "印刷";
-            this.toolStripPrint.Click += new System.EventHandler(this.toolStripPrint_Click);
-            // 
             // toolStripLabel1
             // 
             this.toolStripLabel1.Name = "toolStripLabel1";
             this.toolStripLabel1.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
             this.toolStripLabel1.Size = new System.Drawing.Size(0, 22);
             // 
-            // toolStripPageMove
+            // toolStripOthers
             // 
-            this.toolStripPageMove.Image = ((System.Drawing.Image)(resources.GetObject("toolStripPageMove.Image")));
-            this.toolStripPageMove.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripPageMove.Name = "toolStripPageMove";
-            this.toolStripPageMove.Size = new System.Drawing.Size(91, 22);
-            this.toolStripPageMove.Text = "ページ再配置";
-            this.toolStripPageMove.Click += new System.EventHandler(this.toolStripPageMove_Click);
+            this.toolStripOthers.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.上書き保存ToolStripMenuItem,
+            this.終了ToolStripMenuItem,
+            this.印刷ToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.ページサイズ変更ToolStripMenuItem,
+            this.ページの並べ替えToolStripMenuItem,
+            this.toolStripSeparator2,
+            this.ワードパッドToolStripMenuItem,
+            this.ワードの起動ToolStripMenuItem,
+            this.メモ帳の起動ToolStripMenuItem,
+            this.toolStripSeparator3,
+            this.データフォルダToolStripMenuItem,
+            this.未使用のBoxデータを削除ToolStripMenuItem,
+            this.このページの参照ウインドウToolStripMenuItem});
+            this.toolStripOthers.Image = ((System.Drawing.Image)(resources.GetObject("toolStripOthers.Image")));
+            this.toolStripOthers.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripOthers.Name = "toolStripOthers";
+            this.toolStripOthers.Size = new System.Drawing.Size(67, 22);
+            this.toolStripOthers.Text = "その他";
             // 
-            // toolStripEnd
+            // 上書き保存ToolStripMenuItem
             // 
-            this.toolStripEnd.Image = ((System.Drawing.Image)(resources.GetObject("toolStripEnd.Image")));
-            this.toolStripEnd.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripEnd.Name = "toolStripEnd";
-            this.toolStripEnd.Size = new System.Drawing.Size(51, 22);
-            this.toolStripEnd.Text = "終了";
-            this.toolStripEnd.Click += new System.EventHandler(this.toolStripEnd_Click);
+            this.上書き保存ToolStripMenuItem.Name = "上書き保存ToolStripMenuItem";
+            this.上書き保存ToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.上書き保存ToolStripMenuItem.Text = "上書き保存";
+            this.上書き保存ToolStripMenuItem.Click += new System.EventHandler(this.toolStripSave_Click);
             // 
-            // toolStripHelp
+            // 終了ToolStripMenuItem
             // 
-            this.toolStripHelp.Image = ((System.Drawing.Image)(resources.GetObject("toolStripHelp.Image")));
-            this.toolStripHelp.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripHelp.Name = "toolStripHelp";
-            this.toolStripHelp.Size = new System.Drawing.Size(56, 22);
-            this.toolStripHelp.Text = "ヘルプ";
-            this.toolStripHelp.Click += new System.EventHandler(this.toolStripHelp_Click);
+            this.終了ToolStripMenuItem.Name = "終了ToolStripMenuItem";
+            this.終了ToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.終了ToolStripMenuItem.Text = "終了";
+            this.終了ToolStripMenuItem.Click += new System.EventHandler(this.toolStripEnd_Click);
+            // 
+            // 印刷ToolStripMenuItem
+            // 
+            this.印刷ToolStripMenuItem.Name = "印刷ToolStripMenuItem";
+            this.印刷ToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.印刷ToolStripMenuItem.Text = "印刷";
+            this.印刷ToolStripMenuItem.Click += new System.EventHandler(this.toolStripPrint_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(196, 6);
+            // 
+            // ページサイズ変更ToolStripMenuItem
+            // 
+            this.ページサイズ変更ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.x1080ToolStripMenuItem,
+            this.x2160ToolStripMenuItem,
+            this.x4320ToolStripMenuItem});
+            this.ページサイズ変更ToolStripMenuItem.Name = "ページサイズ変更ToolStripMenuItem";
+            this.ページサイズ変更ToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.ページサイズ変更ToolStripMenuItem.Text = "ページサイズ変更";
+            // 
+            // x1080ToolStripMenuItem
+            // 
+            this.x1080ToolStripMenuItem.Name = "x1080ToolStripMenuItem";
+            this.x1080ToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.x1080ToolStripMenuItem.Text = "1920 x 1080";
+            this.x1080ToolStripMenuItem.Click += new System.EventHandler(this.ToolStripSize_Click);
+            // 
+            // x2160ToolStripMenuItem
+            // 
+            this.x2160ToolStripMenuItem.Name = "x2160ToolStripMenuItem";
+            this.x2160ToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.x2160ToolStripMenuItem.Text = "3840 x 2160";
+            this.x2160ToolStripMenuItem.Click += new System.EventHandler(this.ToolStripSize_Click);
+            // 
+            // x4320ToolStripMenuItem
+            // 
+            this.x4320ToolStripMenuItem.Name = "x4320ToolStripMenuItem";
+            this.x4320ToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.x4320ToolStripMenuItem.Text = "7680 x 4320";
+            this.x4320ToolStripMenuItem.Click += new System.EventHandler(this.ToolStripSize_Click);
+            // 
+            // ページの並べ替えToolStripMenuItem
+            // 
+            this.ページの並べ替えToolStripMenuItem.Name = "ページの並べ替えToolStripMenuItem";
+            this.ページの並べ替えToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.ページの並べ替えToolStripMenuItem.Text = "ページの並べ替え";
+            this.ページの並べ替えToolStripMenuItem.Click += new System.EventHandler(this.toolStripPageMove_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(196, 6);
+            // 
+            // ワードパッドToolStripMenuItem
+            // 
+            this.ワードパッドToolStripMenuItem.Name = "ワードパッドToolStripMenuItem";
+            this.ワードパッドToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.ワードパッドToolStripMenuItem.Text = "ワードパッドの起動";
+            this.ワードパッドToolStripMenuItem.Click += new System.EventHandler(this.toolStripButton1_Click);
+            // 
+            // ワードの起動ToolStripMenuItem
+            // 
+            this.ワードの起動ToolStripMenuItem.Name = "ワードの起動ToolStripMenuItem";
+            this.ワードの起動ToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.ワードの起動ToolStripMenuItem.Text = "ワードの起動";
+            this.ワードの起動ToolStripMenuItem.Click += new System.EventHandler(this.WordToolStripMenuItem_Click);
+            // 
+            // メモ帳の起動ToolStripMenuItem
+            // 
+            this.メモ帳の起動ToolStripMenuItem.Name = "メモ帳の起動ToolStripMenuItem";
+            this.メモ帳の起動ToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.メモ帳の起動ToolStripMenuItem.Text = "メモ帳の起動";
+            this.メモ帳の起動ToolStripMenuItem.Click += new System.EventHandler(this.NotePadToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(196, 6);
+            // 
+            // データフォルダToolStripMenuItem
+            // 
+            this.データフォルダToolStripMenuItem.Name = "データフォルダToolStripMenuItem";
+            this.データフォルダToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.データフォルダToolStripMenuItem.Text = "データフォルダを開く";
+            this.データフォルダToolStripMenuItem.Click += new System.EventHandler(this.toolStripFolder_Click);
+            // 
+            // 未使用のBoxデータを削除ToolStripMenuItem
+            // 
+            this.未使用のBoxデータを削除ToolStripMenuItem.Name = "未使用のBoxデータを削除ToolStripMenuItem";
+            this.未使用のBoxデータを削除ToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.未使用のBoxデータを削除ToolStripMenuItem.Text = "未使用のBoxデータを削除";
+            this.未使用のBoxデータを削除ToolStripMenuItem.Click += new System.EventHandler(this.ToolStripBoxClear_Click);
+            // 
+            // このページの参照ウインドウToolStripMenuItem
+            // 
+            this.このページの参照ウインドウToolStripMenuItem.Name = "このページの参照ウインドウToolStripMenuItem";
+            this.このページの参照ウインドウToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.このページの参照ウインドウToolStripMenuItem.Text = "このページの参照ウインドウ";
+            this.このページの参照ウインドウToolStripMenuItem.Click += new System.EventHandler(this.toolStripDisplay_Click);
+            // 
+            // toolStripPageSize
+            // 
+            this.toolStripPageSize.Name = "toolStripPageSize";
+            this.toolStripPageSize.ReadOnly = true;
+            this.toolStripPageSize.Size = new System.Drawing.Size(80, 25);
+            this.toolStripPageSize.Text = "1920 x 1080";
+            // 
+            // toolStripHelpButton1
+            // 
+            this.toolStripHelpButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripHelpButton1.Image")));
+            this.toolStripHelpButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripHelpButton1.Name = "toolStripHelpButton1";
+            this.toolStripHelpButton1.Size = new System.Drawing.Size(56, 22);
+            this.toolStripHelpButton1.Text = "ヘルプ";
+            this.toolStripHelpButton1.Click += new System.EventHandler(this.toolStripHelp_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(1305, 408);
+            this.ClientSize = new System.Drawing.Size(1417, 408);
             this.Controls.Add(this.toolStripContainer1);
-            this.MaximumSize = new System.Drawing.Size(1920, 1080);
             this.MinimumSize = new System.Drawing.Size(200, 150);
             this.Name = "MainForm";
-            this.Text = "MyNote";
+            this.Text = "スクラップブック";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.toolStripContainer1.ContentPanel.ResumeLayout(false);
@@ -307,25 +377,35 @@
         private System.Windows.Forms.ToolStripContainer toolStripContainer1;
         private System.Windows.Forms.Panel workingpanel;
         private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripButton toolStripSave;
         private System.Windows.Forms.ToolStripButton toolStripLoad;
-        private System.Windows.Forms.ToolStripButton toolStripPrint;
         private System.Windows.Forms.ToolStripButton toolStripScreen;
         private System.Windows.Forms.ToolStripButton toolStripPage;
-        private System.Windows.Forms.ToolStripButton toolStripDisplay;
-        private System.Windows.Forms.ToolStripButton toolStripFolder;
         private System.Windows.Forms.ToolStripButton toolStripBackground;
-        private System.Windows.Forms.ToolStripButton toolStripPageMove;
-        private System.Windows.Forms.ToolStripButton toolStripEnd;
-        private System.Windows.Forms.ToolStripButton toolStripHelp;
-        private System.Windows.Forms.ToolStripDropDownButton toolStripPagesBox;
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;
         private System.Windows.Forms.Panel scrollpanel;
         private System.Windows.Forms.ToolStripButton toolStripText;
         private System.Windows.Forms.ToolStripButton toolStripCreate;
-        private System.Windows.Forms.ToolStripDropDownButton toolStripSize;
         private System.Windows.Forms.ToolStripTextBox toolStripPageSize;
-        private System.Windows.Forms.ToolStripButton toolStripWordPad;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripOthers;
+        private System.Windows.Forms.ToolStripMenuItem 上書き保存ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 終了ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 印刷ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem ページの並べ替えToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem ワードパッドToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ワードの起動ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem メモ帳の起動ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripMenuItem データフォルダToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 未使用のBoxデータを削除ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem このページの参照ウインドウToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ページサイズ変更ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem x1080ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem x2160ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem x4320ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripPagesBox;
+        private System.Windows.Forms.ToolStripButton toolStripHelpButton1;
     }
 }
 

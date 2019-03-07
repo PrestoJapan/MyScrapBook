@@ -9,7 +9,7 @@ namespace MyScrapBook
     public partial class MainForm : Form
     {
         #region ReadNote
-        public bool readNote()
+        public bool readDialog()
         {
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.FileName = Properties.Settings.Default.workingFile;
@@ -27,7 +27,7 @@ namespace MyScrapBook
                 Properties.Settings.Default.workingDirectory = Path.GetDirectoryName(ofd.FileName);
                 Properties.Settings.Default.workingFile = Path.GetFileName(ofd.FileName);
 
-                readMethod(ofd.FileName);
+                readFile(ofd.FileName);
                 return true;
             } else
             {
@@ -35,30 +35,32 @@ namespace MyScrapBook
             }
         }
 
-        private void readMethod(string filename)
+        private void readFile(string filename)
         {
             radios = new List<RadioButton>();
             try
             {
                 MLINF metafile = JsonConvert.DeserializeObject<MLINF>(File.ReadAllText(filename));
                 saveboxinfos = metafile.boxinfos;
+                setPage(metafile.notesize.Width.ToString() + " x " + metafile.notesize.Height.ToString());
             }
             catch (Exception ex)
             {
+                // 移行の処理　多分2019 04から不要
                 saveboxinfos = JsonConvert.DeserializeObject<List<BoxInfo>>(File.ReadAllText(filename));
             }
 
             int count = 0;
             //　初期化
             maxpage = 1;
-            foreach (string fkey in richBoxInfos.Keys)
+            foreach (string fkey in mediaBoxInfos.Keys)
             {
-                if (richBoxInfos[fkey].boxinfo.page == getCurrentPage())
+                if (mediaBoxInfos[fkey].boxinfo.page == getCurrentPage())
                 {
-                    Controls.Remove(richBoxInfos[fkey].controlbox);
+                    Controls.Remove(mediaBoxInfos[fkey].controlbox);
                 }
             }
-            richBoxInfos = new Dictionary<string, RichBoxsInfo>();
+            mediaBoxInfos = new Dictionary<string, MediaBoxsInfo>();
 
             Boolean zeropage = false;
             if (saveboxinfos == null) return;
@@ -72,7 +74,7 @@ namespace MyScrapBook
                     {
                         RichTextBox rbox = createRichBox();
                         rbox.LoadFile(cfile);
-                        RichBoxsInfo rinfo = new RichBoxsInfo();
+                        MediaBoxsInfo rinfo = new MediaBoxsInfo();
                         rinfo.boxinfo = info;
                         rinfo.controlbox = rbox;
                         if (rinfo.boxinfo.page == 0) zeropage = true;
@@ -83,13 +85,13 @@ namespace MyScrapBook
                         info.text = rbox.Text;
                         rbox.ReadOnly = true;
 
-                        richBoxInfos.Add(info.filename, rinfo);
+                        mediaBoxInfos.Add(info.filename, rinfo);
                     }
                     else if (info.filename.Contains("png"))
                     {
                         // Imageの追加
                         PictureBox pic = createPictureBox();
-                        RichBoxsInfo rinfo = new RichBoxsInfo();
+                        MediaBoxsInfo rinfo = new MediaBoxsInfo();
                         rinfo.boxinfo = info;
                         rinfo.controlbox = pic;
                         if (rinfo.boxinfo.page == 0) zeropage = true;
@@ -99,12 +101,12 @@ namespace MyScrapBook
                         pic.Size = rinfo.boxinfo.size; 
                         pic.Tag = info.filename;
 
-                        richBoxInfos.Add(info.filename, rinfo);
+                        mediaBoxInfos.Add(info.filename, rinfo);
                     }
                     else if (info.filename.Contains("html"))
                     {
                         // Html Panelの追加
-                        RichBoxsInfo rinfo = new RichBoxsInfo() { boxinfo = info }; 
+                        MediaBoxsInfo rinfo = new MediaBoxsInfo() { boxinfo = info }; 
                         Panel web = createWebBrowser(File.ReadAllText(cfile), rinfo.boxinfo);
                         rinfo.controlbox = web;
                         if (info.page == 0) zeropage = true; // ?
@@ -113,7 +115,7 @@ namespace MyScrapBook
                         //web.Tag = info.filename;
                         //web.Controls[0].Tag = info.filename;
 
-                        richBoxInfos.Add(info.filename, rinfo);
+                        mediaBoxInfos.Add(info.filename, rinfo);
                     }
                     if (count < info.page) { count = info.page; }
                 }
@@ -122,7 +124,7 @@ namespace MyScrapBook
                     // ファイルが見つからないエラー
                 }
             }
-            if (zeropage) foreach (RichBoxsInfo info in richBoxInfos.Values) { info.boxinfo.page++; }
+            if (zeropage) foreach (MediaBoxsInfo info in mediaBoxInfos.Values) { info.boxinfo.page++; }
             pagedraw(1);
             onofftoolStrip(true);
             return;
@@ -130,11 +132,11 @@ namespace MyScrapBook
 
         public bool readNote0()
         {
-            bool flag = readNote();
+            bool flag = readDialog();
             if (!flag) return false;
             // toolstripのページ修正
             int max = 1;
-            foreach (RichBoxsInfo info in richBoxInfos.Values)
+            foreach (MediaBoxsInfo info in mediaBoxInfos.Values)
             {
                 if (info.boxinfo.page > max) max = info.boxinfo.page;
             }
@@ -153,9 +155,9 @@ namespace MyScrapBook
         private void saveNote()
         {
             saveboxinfos = new List<BoxInfo>();
-            foreach (string timekey in richBoxInfos.Keys)
+            foreach (string timekey in mediaBoxInfos.Keys)
             {
-                saveboxinfos.Add(richBoxInfos[timekey].boxinfo);
+                saveboxinfos.Add(mediaBoxInfos[timekey].boxinfo);
             }
             MLINF metafile = new MLINF() {boxinfos = saveboxinfos , notesize = setPageSize(toolStripPageSize.Text)};
             File.WriteAllText(getWorkfilefullpath(), JsonConvert.SerializeObject(metafile));

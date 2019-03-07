@@ -14,13 +14,12 @@ namespace MyScrapBook
         public MainForm()
         {
             InitializeComponent();
-
             initializeMethod();
         }
 
         private void initializeMethod()
         {
-            this.MaximumSize = Screen.AllScreens[0].Bounds.Size;
+//            this.MaximumSize = Screen.AllScreens[0].Bounds.Size;
             createContextMenu();
             BackColor = Color.Black;
             // workingpanelイベントの登録
@@ -29,14 +28,13 @@ namespace MyScrapBook
             workingpanel.DragDrop += Workingpanel_DragDrop;
             workingpanel.DragEnter += Workingpanel_DragEnter;
             workingpanel.Size = setPageSize(toolStripPageSize.Text);
+            // 
             toolStripPagesBox.DropDownItems.Add("ページ1");
             toolStripPagesBox.Text = toolStripPagesBox.DropDownItems[0].Text;
             onofftoolStrip(false);
-            // workingpanelのサイズ登録
-            toolStripSize.DropDownItems.Add("1920 x 1080");
-            toolStripSize.DropDownItems.Add("3840 x 2160");
-            toolStripSize.DropDownItems.Add("7680 x 4320");
         }
+
+
         #endregion MainForm
     }
 

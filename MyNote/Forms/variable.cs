@@ -14,11 +14,11 @@ namespace MyScrapBook
         //　アプリの状態
         private bool editstart = false;
         //　ドラッグ＆ドロップの状態　移動量
-        private enum astatus { 移動, サイズ, NOP, 削除 };
+        private enum astatus { 移動, サイズ左上, サイズ左下, サイズ右上, サイズ右下, NOP, 削除, ライン };
         private astatus status = astatus.NOP;
         private Point delta = new Point();
         // ページ機能
-        public Dictionary<string, RichBoxsInfo> richBoxInfos = new Dictionary<string, RichBoxsInfo>();
+        public Dictionary<string, MediaBoxsInfo> mediaBoxInfos = new Dictionary<string, MediaBoxsInfo>();
         public string currentControlTag = "";
         public int maxpage = 1;
         public FlowLayoutPanel pagePanel = new FlowLayoutPanel();
@@ -26,7 +26,7 @@ namespace MyScrapBook
         //　保存場所
         public List<BoxInfo> saveboxinfos;
         // Popup  
-        PopupForm fm = new PopupForm();
+        PopupHelpForm fm = new PopupHelpForm();
         // Popupの組み合わせ
         private ContextMenuStrip contextRichMenuStrip;
         private ContextMenuStrip contextWorkPanelMenuStrip;
