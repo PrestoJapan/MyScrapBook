@@ -28,7 +28,7 @@ namespace MyScrapBook
                 if (files.Length != 1) return;
                 // 拡張子を確認する
                 string fileName = files[0];
-                switch (Path.GetExtension(fileName))
+                switch (Path.GetExtension(fileName).ToLower())
                 {
                     case ".php":
                     case ".txt":
@@ -90,7 +90,6 @@ namespace MyScrapBook
             }
         }
         #endregion コントロールのZOrder
-
 
 
     }

@@ -28,8 +28,8 @@ namespace MyScrapBook
         #region hint tools
         private List<Point> DrawBoxToBoxLine(BoxInfo box1, BoxInfo box2)
         {
-            List<Point> edge1 = edges(box1);
-            List<Point> edge2 = edges(box2);
+            List<Point> edge1 = box1.edges();
+            List<Point> edge2 = box2.edges();
             int min1 = 0;
             int min2 = 0;
             double mindist = double.MaxValue;
@@ -50,17 +50,6 @@ namespace MyScrapBook
             return new List<Point>() { edge1[min1], edge2[min2]};
         }
 
-        private List<Point> edges(BoxInfo box1)
-        {
-            // 上辺、右辺、下辺、左辺
-            return new List<Point>() {
-                new Point(box1.location.X + box1.size.Width / 2, box1.location.Y),
-                new Point(box1.location.X + box1.size.Width, box1.location.Y + box1.size.Height / 2),
-                new Point(box1.location.X + box1.size.Width / 2, box1.location.Y + box1.size.Height),
-                new Point(box1.location.X, box1.location.Y + box1.size.Height / 2),
-            };
-        } 
-
         private Point CursorPosition()
         {
             return workingpanel.PointToClient(Cursor.Position);
@@ -72,13 +61,7 @@ namespace MyScrapBook
             Dictionary<string, int> onboxes = new Dictionary<string, int>();
             foreach (string key in mediaBoxInfos.Keys)
             {
-                int minx = mediaBoxInfos[key].boxinfo.location.X;
-                int miny = mediaBoxInfos[key].boxinfo.location.Y;
-                int maxx = minx + mediaBoxInfos[key].boxinfo.size.Width;
-                int maxy = miny + mediaBoxInfos[key].boxinfo.size.Height;
-                if (point.X > minx && point.X < maxx && 
-                    point.Y > miny && point.Y < maxy &&
-                    page == mediaBoxInfos[key].boxinfo.page)
+                if (mediaBoxInfos[key].boxinfo.isInside(point, page))
                 {
                     onboxes.Add(key, mediaBoxInfos[key].boxinfo.zorder);
                 }

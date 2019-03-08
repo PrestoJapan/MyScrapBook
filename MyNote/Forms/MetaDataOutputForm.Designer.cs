@@ -1,6 +1,6 @@
 ﻿namespace MyScrapBook
 {
-    partial class PopupHelpForm
+    partial class MetaDataOutputForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,36 +28,34 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.RichTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
-            // RichTextBox1
+            // textBox1
             // 
-            this.RichTextBox1.BackColor = System.Drawing.Color.White;
-            this.RichTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.RichTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.RichTextBox1.Location = new System.Drawing.Point(0, 0);
-            this.RichTextBox1.Margin = new System.Windows.Forms.Padding(15);
-            this.RichTextBox1.Name = "RichTextBox1";
-            this.RichTextBox1.ReadOnly = true;
-            this.RichTextBox1.Size = new System.Drawing.Size(614, 421);
-            this.RichTextBox1.TabIndex = 0;
-            this.RichTextBox1.Text = "";
+            this.textBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBox1.Font = new System.Drawing.Font("MS UI Gothic", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.textBox1.Location = new System.Drawing.Point(0, 0);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(659, 351);
+            this.textBox1.TabIndex = 0;
             // 
-            // PopupHelpForm
+            // MetaDataOutputForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(614, 421);
-            this.Controls.Add(this.RichTextBox1);
-            this.Name = "PopupHelpForm";
+            this.ClientSize = new System.Drawing.Size(659, 351);
+            this.Controls.Add(this.textBox1);
+            this.Name = "MetaDataOutputForm";
+            this.Text = "MetaDataOutputForm";
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.RichTextBox RichTextBox1;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }

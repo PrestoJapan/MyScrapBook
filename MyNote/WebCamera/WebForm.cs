@@ -42,7 +42,7 @@ namespace MyScrapBook
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            main.print(panel1);
+            main.print2();
         }
     }
 }

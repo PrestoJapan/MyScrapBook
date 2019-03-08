@@ -22,7 +22,7 @@ namespace MyScrapBook
             string[] names = myAssembly.GetManifestResourceNames();
 
             Stream stream = myAssembly.GetManifestResourceStream("MyScrapBook.help.rtf");
-            richTextBox1.LoadFile(stream, RichTextBoxStreamType.RichText);
+            RichTextBox1.LoadFile(stream, RichTextBoxStreamType.RichText);
         }
 
     }

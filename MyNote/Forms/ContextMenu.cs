@@ -16,29 +16,30 @@ namespace MyScrapBook
         {
             //　RichTextBoxのメニュー
             contextRichMenuStrip = createContext("contextMenuStrip1", ContextMenuStrip_Click, new ToolStripItem[] {
+                CreateMenuItem(this.InfoToolStripMenuItem_Click, "InfoToolStripMenuItem", "情報入力"),
                 CreateMenuItem(this.DeleteToolStripMenuItem_Click, "DeleteToolStripMenuItem", "削除"),
                 CreateMenuItem(this.FrontToolStripMenuItem_Click, "FrontToolStripMenuItem", "前面"),
                 CreateMenuItem(this.LineToolStripMenuItem_Click, "LineToolStripMenuItem", "ラインの削除"),
                 CreateMenuItem(this.WordToolStripMenuItem_Click, "WordToolStripMenuItem", "ワード編集"),
                 CreateMenuItem(this.WordPadToolStripMenuItem_Click, "WordPadToolStripMenuItem", "ワードパッド編集") });
-            //　workingpanel
-            //contextWorkPanelMenuStrip = createContext("contextMenuStrip2", ContextMenuStrip_Click, new ToolStripItem[] {
-            //    CreateMenuItem(this.MovePageToolStripMenuItem_Click, "MovePageToolStripMenuItem", "移動")});
             //　PictureBoxのメニュー
             contextPictureMenuStrip = createContext("contextMenuStrip3", ContextMenuStrip_Click, new ToolStripItem[] {
+                CreateMenuItem(this.InfoToolStripMenuItem_Click, "InfoToolStripMenuItem", "情報入力"),
                 CreateMenuItem(this.DeleteToolStripMenuItem_Click, "DeleteToolStripMenuItem", "削除"),
                 CreateMenuItem(this.FrontToolStripMenuItem_Click, "FrontToolStripMenuItem", "前面"),
+                CreateMenuItem(this.RotateToolStripMenuItem_Click, "RotateToolStripMenuItem", "90度左回転"),
                 CreateMenuItem(this.LineToolStripMenuItem_Click, "LineToolStripMenuItem", "ラインの削除")});
             //　HTMLBoxのメニュー
             contextHTMLMenuStrip = createContext("contextMenuStrip4", ContextMenuStrip_Click, new ToolStripItem[] {
+                CreateMenuItem(this.InfoToolStripMenuItem_Click, "InfoToolStripMenuItem", "情報入力"),
                 CreateMenuItem(this.DeleteToolStripMenuItem_Click, "DeleteToolStripMenuItem", "削除"),
                 CreateMenuItem(this.FrontToolStripMenuItem_Click, "FrontToolStripMenuItem", "前面"),
                 CreateMenuItem(this.LineToolStripMenuItem_Click, "LineToolStripMenuItem", "ラインの削除"),
                 CreateMenuItem(this.WebToolStripMenuItem_Click, "WebToolStripMenuItem", "Webの表示") });
-
-            // workingpanelにメニューを割り当てる
-            workingpanel.ContextMenuStrip = contextWorkPanelMenuStrip;
-            workingpanel.MouseUp += Workingpanel_MouseUp;
+            //　Pageのメニュー
+            contextPageMenuStrip = createContext("contextMenuStrip5", ContextMenuStrip_Click, new ToolStripItem[] {
+                CreateMenuItem(this.PageInfoToolStripMenuItem_Click, "PageInfoToolStripMenuItem", "情報確認") });
+            
         }
 
         private ContextMenuStrip createContext(string name, EventHandler handler, ToolStripItem[] items)
@@ -70,6 +71,12 @@ namespace MyScrapBook
         #endregion ContextMenu
 
         #region toolStripクリック
+        private void oTherBookToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            mediaBoxInfos.Clear();
+            fileopen();
+        }
+
         private void ToolStripSize_Click(object sender, EventArgs e)
         {
             ToolStripMenuItem menu = sender as ToolStripMenuItem;
@@ -105,6 +112,34 @@ namespace MyScrapBook
             tofrontControl(mediaBoxInfos[currentControlTag].controlbox);
         }
 
+        private void RotateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            rotateControlSave(currentControlTag);
+        }
+
+        private void rotateControlSave(string tag)
+        {
+            PictureBox pic = rotateControl(mediaBoxInfos[currentControlTag].controlbox as PictureBox);
+            mediaBoxInfos[currentControlTag].boxinfo.rotate++;
+            mediaBoxInfos[currentControlTag].boxinfo.rotate = mediaBoxInfos[currentControlTag].boxinfo.rotate % 4;
+
+            mediaBoxInfos[currentControlTag].boxinfo.size = rotateSize(mediaBoxInfos[currentControlTag].boxinfo.size);
+        }
+
+        private PictureBox rotateControl(PictureBox pic)
+        {
+            pic.Image.RotateFlip(RotateFlipType.Rotate270FlipNone);
+            pic.Size = rotateSize(pic.Size);
+            return pic;
+        }
+
+        private Size rotateSize(Size size)
+        {
+            int width = size.Width;
+            size.Width = size.Height;
+            size.Height = width;
+            return size;
+        }
         private void LineToolStripMenuItem_Click(object sender, EventArgs e)
         {
             tofrontControl(mediaBoxInfos[currentControlTag].controlbox);
@@ -113,11 +148,11 @@ namespace MyScrapBook
 
         private void deleteLine(string controltag)
         {
-            List<string> linktags = mediaBoxInfos[currentControlTag].boxinfo.linkboxes;
+            List<LinkInfo> linktags = mediaBoxInfos[currentControlTag].boxinfo.linkboxes;
             // パートナーのリンク情報からこのBoxの情報を消す
-            foreach (string tag in linktags)
+            foreach (LinkInfo tag in linktags)
             {
-                mediaBoxInfos[tag].boxinfo.linkboxes.Remove(currentControlTag);
+                mediaBoxInfos[tag.pairbox].boxinfo.linkboxes.Remove(tag);
             }
             //　自身のリンク情報を消す
             mediaBoxInfos[currentControlTag].boxinfo.linkboxes.Clear();
@@ -158,6 +193,20 @@ namespace MyScrapBook
             else invokeApp("WORDPAD.EXE", Path.Combine(getWorkSubDir(), mediaBoxInfos[currentControlTag].boxinfo.filename));
         }
 
+        private void InfoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // 情報入力用のフォームを開く
+            MetaDataInputForm fm = new MetaDataInputForm(mediaBoxInfos[currentControlTag].boxinfo.mediainfo);
+            fm.ShowDialog();
+        }
+
+        private void PageInfoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // ページ内のボックス情報表示用のフォームを開く
+            MetaDataOutputForm fm = new MetaDataOutputForm(getCurrentPage(), mediaBoxInfos);
+            fm.ShowDialog();
+        }
+
         private void NotePadToolStripMenuItem_Click(object sender, EventArgs e)
         {
             invokeApp("NOTEPAD.EXE");
@@ -170,13 +219,20 @@ namespace MyScrapBook
 
         private void toolStripLoad_Click(object sender, EventArgs e)
         {
+            fileopen();
+            //bool flag = readNote0();
+            //if (flag) onofftoolStrip(true);
+        }
+
+        private void fileopen()
+        {
             bool flag = readNote0();
             if (flag) onofftoolStrip(true);
         }
-
         private void toolStripPrint_Click(object sender, EventArgs e)
         {
-            print(workingpanel);
+            //print(workingpanel);
+            print2();
         }
 
         private void toolStripScreen_Click(object sender, EventArgs e)
@@ -269,6 +325,9 @@ namespace MyScrapBook
             toolStripBackground.Visible = flag;
             toolStripPageSize.Visible = flag;
             toolStripOthers.Visible = flag;
+
+            if (flag) workingpanel.ContextMenuStrip = contextPageMenuStrip;
+            else workingpanel.ContextMenuStrip = null;
         }
 
         private void setPage(string size)
@@ -322,17 +381,17 @@ namespace MyScrapBook
         }
 
         //Button1のClickイベントハンドラ
-        public void print(Control panel)
-        {
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + @"\cpage.png";
-            //コントロールの外観を描画するBitmapの作成
-            Bitmap bmp = CaptureControl(panel);
-            //キャプチャする
-            bmp.Save(path);
-            //後始末
-            bmp.Dispose();
-            invokeApp("mspaint.exe", path);
-        }
+        //public void print(Control panel)
+        //{
+        //    string path = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + @"\cpage.png";
+        //    //コントロールの外観を描画するBitmapの作成
+        //    Bitmap bmp = CaptureControl(panel);
+        //    //キャプチャする
+        //    bmp.Save(path);
+        //    //後始末
+        //    bmp.Dispose();
+        //    invokeApp("mspaint.exe", path);
+        //}
 
         public void pageplus()
         {

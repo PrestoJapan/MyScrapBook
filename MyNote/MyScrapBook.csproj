@@ -49,6 +49,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\MetaDataInputForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MetaDataInputForm.Designer.cs">
+      <DependentUpon>MetaDataInputForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MetaDataOutputForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MetaDataOutputForm.Designer.cs">
+      <DependentUpon>MetaDataOutputForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="WebCamera\CamaraForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -109,7 +121,6 @@
     <Compile Include="Forms\Workingpanel.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Tools\DataClass.cs" />
     <Compile Include="Forms\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -127,6 +138,12 @@
     <Compile Include="Forms\ReferenceForm.Designer.cs">
       <DependentUpon>ReferenceForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Forms\MetaDataInputForm.resx">
+      <DependentUpon>MetaDataInputForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MetaDataOutputForm.resx">
+      <DependentUpon>MetaDataOutputForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="WebCamera\CamaraForm.resx">
       <DependentUpon>CamaraForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -177,6 +194,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Tools\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

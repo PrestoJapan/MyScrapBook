@@ -61,6 +61,7 @@
             this.このページの参照ウインドウToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripPageSize = new System.Windows.Forms.ToolStripTextBox();
             this.toolStripHelpButton1 = new System.Windows.Forms.ToolStripButton();
+            this.別のブックを開くToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer1.SuspendLayout();
@@ -122,7 +123,7 @@
             this.toolStripHelpButton1});
             this.toolStrip1.Location = new System.Drawing.Point(3, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(759, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(790, 25);
             this.toolStrip1.TabIndex = 0;
             // 
             // toolStripCreate
@@ -196,6 +197,7 @@
             // toolStripOthers
             // 
             this.toolStripOthers.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.別のブックを開くToolStripMenuItem,
             this.上書き保存ToolStripMenuItem,
             this.終了ToolStripMenuItem,
             this.印刷ToolStripMenuItem,
@@ -348,6 +350,13 @@
             this.toolStripHelpButton1.Text = "ヘルプ";
             this.toolStripHelpButton1.Click += new System.EventHandler(this.toolStripHelp_Click);
             // 
+            // 別のブックを開くToolStripMenuItem
+            // 
+            this.別のブックを開くToolStripMenuItem.Name = "別のブックを開くToolStripMenuItem";
+            this.別のブックを開くToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.別のブックを開くToolStripMenuItem.Text = "別のブックを開く";
+            this.別のブックを開くToolStripMenuItem.Click += new System.EventHandler(this.oTherBookToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -406,6 +415,7 @@
         private System.Windows.Forms.ToolStripMenuItem x4320ToolStripMenuItem;
         private System.Windows.Forms.ToolStripDropDownButton toolStripPagesBox;
         private System.Windows.Forms.ToolStripButton toolStripHelpButton1;
+        private System.Windows.Forms.ToolStripMenuItem 別のブックを開くToolStripMenuItem;
     }
 }
 

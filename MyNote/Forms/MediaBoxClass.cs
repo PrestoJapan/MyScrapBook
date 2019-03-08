@@ -11,6 +11,7 @@ namespace MyScrapBook
     public partial class MainForm : Form
     {
         // Workingpanelにコントロールを追加
+
         #region 独自コントロールの追加
         // Workingpanelのダブルクリックで呼ばれる
         private void addControlToWorkingpanel()
@@ -80,10 +81,7 @@ namespace MyScrapBook
             RichTextBox rbox = new RichTextBox();
             rbox.BorderStyle = BorderStyle.None;
             // マウスを使った移動
-            rbox.MouseDown += Box_MouseDown;
-            rbox.MouseMove += Box_MouseMove;
-            rbox.MouseUp += Box_MouseUp;
-            rbox.MouseDoubleClick += Box_MouseDoubleClick;
+            addMouseEvent(rbox);
             rbox.ScrollBars = RichTextBoxScrollBars.None;
             rbox.ContextMenuStrip = this.contextRichMenuStrip; // 右ボタンクリックで表示されるポップアップメニュー
             rbox.BackColor = Color.White;
@@ -137,10 +135,7 @@ namespace MyScrapBook
         {
             PictureBox pic = new PictureBox();
             pic.SizeMode = PictureBoxSizeMode.Zoom;
-            pic.MouseDown += Box_MouseDown;
-            pic.MouseMove += Box_MouseMove;
-            pic.MouseUp += Box_MouseUp;
-            pic.MouseDoubleClick += Box_MouseDoubleClick;
+            addMouseEvent(pic);
             pic.ContextMenuStrip = this.contextPictureMenuStrip; // 右ボタンクリックで表示されるポップアップメニュー
             return pic;
         }
@@ -150,10 +145,7 @@ namespace MyScrapBook
             Panel pan = new Panel() { BackColor = Color.White, Width = boxinfo.size.Width, Height = boxinfo.size.Height };
             WebBrowser web = new WebBrowser();
 
-            pan.MouseDown += Box_MouseDown;
-            pan.MouseMove += Box_MouseMove;
-            pan.MouseUp += Box_MouseUp;
-            pan.MouseDoubleClick += Box_MouseDoubleClick;
+            addMouseEvent(pan);
             pan.ContextMenuStrip = this.contextHTMLMenuStrip; // 右ボタンクリックで表示されるポップアップメニュー
             pan.Location = boxinfo.location;
             pan.Tag = boxinfo.filename;
@@ -170,6 +162,14 @@ namespace MyScrapBook
 
             pan.Controls.Add(web);
             return pan;
+        }
+
+        private void addMouseEvent(Control box)
+        {
+            box.MouseDown += Box_MouseDown;
+            box.MouseMove += Box_MouseMove;
+            box.MouseUp += Box_MouseUp;
+            box.MouseDoubleClick += Box_MouseDoubleClick;
         }
 
         private void Rbox_LostFocus(object sender, EventArgs e)
@@ -232,8 +232,8 @@ namespace MyScrapBook
                     //// ラインを引き直す
                     if (startbox.Length > 0 && endbox.Length > 0)
                     {
-                        mediaBoxInfos[startbox].boxinfo.linkboxes.Add(endbox);
-                        mediaBoxInfos[endbox].boxinfo.linkboxes.Add(startbox);
+                        mediaBoxInfos[startbox].boxinfo.linkboxes.Add(new LinkInfo { pairbox = endbox, parent = false });
+                        mediaBoxInfos[endbox].boxinfo.linkboxes.Add(new LinkInfo { pairbox = startbox, parent = true });
                         status = astatus.NOP;
                         workingpanel.Refresh();
                     }
@@ -346,23 +346,25 @@ namespace MyScrapBook
         }
         #endregion 独自コントロールの削除・前面・拡大
 
-        LinePoint tmpline = new LinePoint();
 
+        #region ラインの描画
+
+        LinePoint tmpline = new LinePoint();
 
         // Boxをつなぐラインの描画
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
-            Pen pen = new Pen(Color.Red, 3);
+            Pen pen = new Pen(tmpline.color, tmpline.Width);
             Graphics g = e.Graphics;
             int cpage = getCurrentPage();
-
+            // カレントページのラインを描画
             foreach (string skey in mediaBoxInfos.Keys)
             {
-                foreach (string ekey in mediaBoxInfos[skey].boxinfo.linkboxes)
+                foreach (LinkInfo ekey in mediaBoxInfos[skey].boxinfo.linkboxes)
                 {
                     if (mediaBoxInfos[skey].boxinfo.page == cpage)
                     {
-                        List<Point> lines = DrawBoxToBoxLine(mediaBoxInfos[skey].boxinfo, mediaBoxInfos[ekey].boxinfo);
+                        List<Point> lines = DrawBoxToBoxLine(mediaBoxInfos[skey].boxinfo, mediaBoxInfos[ekey.pairbox].boxinfo);
                         g.DrawLine(pen, lines[0].X, lines[0].Y, lines[1].X, lines[1].Y);
                     }
                 }
@@ -370,11 +372,7 @@ namespace MyScrapBook
             if (status == astatus.ライン) g.DrawLine(pen, tmpline.start.X, tmpline.start.Y, tmpline.end.X, tmpline.end.Y);
             g.Dispose();
         }
+        #endregion ラインの描画
     }
 
-    class LinePoint
-    {
-        public Point start;
-        public Point end;
-    }
 }

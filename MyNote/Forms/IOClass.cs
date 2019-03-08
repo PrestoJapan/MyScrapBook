@@ -41,13 +41,22 @@ namespace MyScrapBook
             try
             {
                 MLINF metafile = JsonConvert.DeserializeObject<MLINF>(File.ReadAllText(filename));
+                // 内容を変数に割り当てる
+                metaInfo.author = metafile.author;
+                metaInfo.bookmetainfo = metafile.bookmetainfo;
+                metaInfo.boxinfos = metafile.boxinfos;
+                metaInfo.createDateTime = metafile.createDateTime;
+                metaInfo.memo = metafile.memo;
+                metaInfo.notesize = metafile.notesize;
                 saveboxinfos = metafile.boxinfos;
+                //　ページサイズを設定する
                 setPage(metafile.notesize.Width.ToString() + " x " + metafile.notesize.Height.ToString());
             }
             catch (Exception ex)
             {
                 // 移行の処理　多分2019 04から不要
-                saveboxinfos = JsonConvert.DeserializeObject<List<BoxInfo>>(File.ReadAllText(filename));
+                MessageBox.Show("ファイルのバージョンが異なります。");
+                Application.Exit();
             }
 
             int count = 0;
@@ -96,7 +105,10 @@ namespace MyScrapBook
                         rinfo.controlbox = pic;
                         if (rinfo.boxinfo.page == 0) zeropage = true;
                         pic.Load(cfile);
+                        // 回転
+                        for (int i=0;i< rinfo.boxinfo.rotate; i++) rotateControl(pic);
                         pic.Location = info.location;
+                        rinfo.boxinfo.size = info.size;
                         //                        pic.Size = pic.Image.Size;
                         pic.Size = rinfo.boxinfo.size; 
                         pic.Tag = info.filename;
@@ -109,12 +121,7 @@ namespace MyScrapBook
                         MediaBoxsInfo rinfo = new MediaBoxsInfo() { boxinfo = info }; 
                         Panel web = createWebBrowser(File.ReadAllText(cfile), rinfo.boxinfo);
                         rinfo.controlbox = web;
-                        if (info.page == 0) zeropage = true; // ?
-                        //web.Location = info.location;
-                        //web.Size = rinfo.boxinfo.size;
-                        //web.Tag = info.filename;
-                        //web.Controls[0].Tag = info.filename;
-
+                        if (info.page == 0) zeropage = true;
                         mediaBoxInfos.Add(info.filename, rinfo);
                     }
                     if (count < info.page) { count = info.page; }
@@ -159,8 +166,10 @@ namespace MyScrapBook
             {
                 saveboxinfos.Add(mediaBoxInfos[timekey].boxinfo);
             }
-            MLINF metafile = new MLINF() {boxinfos = saveboxinfos , notesize = setPageSize(toolStripPageSize.Text)};
-            File.WriteAllText(getWorkfilefullpath(), JsonConvert.SerializeObject(metafile));
+            metaInfo.bookmetainfo = MLINF.getAllBoxInfo(saveboxinfos);
+            metaInfo.notesize = setPageSize(toolStripPageSize.Text);
+            metaInfo.boxinfos = saveboxinfos;
+            File.WriteAllText(getWorkfilefullpath(), JsonConvert.SerializeObject(metaInfo));
             MessageBox.Show(Properties.Settings.Default.workingFile + "を上書き保存しました。");
         }
 
@@ -207,6 +216,7 @@ namespace MyScrapBook
                     {
                         Directory.CreateDirectory(getWorkSubDir());
                     }
+                    metaInfo = new MLINF() { createDateTime = DateTime.Now };
                 }
                 this.Text = String.Format("{0}  {1} ページ", getWorkfile(), getCurrentPage());
             } else
